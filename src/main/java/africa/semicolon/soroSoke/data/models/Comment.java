@@ -1,2 +1,4 @@
-package africa.semicolon.soroSoke.data.models;public class Comment {
+package africa.semicolon.soroSoke.data.models;
+
+public class Comment {
 }
