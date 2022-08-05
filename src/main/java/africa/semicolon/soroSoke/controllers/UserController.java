@@ -1,11 +1,14 @@
 package africa.semicolon.soroSoke.controllers;
 
+import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
 import africa.semicolon.soroSoke.dtos.requests.RegisterRequest;
+import africa.semicolon.soroSoke.exceptions.BlogTitleExists;
 import africa.semicolon.soroSoke.exceptions.UserExistsException;
 import africa.semicolon.soroSoke.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,10 +28,13 @@ public class UserController {
         }
     }
 
-//    @PatchMapping("/user/newBlog")
-//    public ResponseEntity<?> createBlog(@RequestBody AddBlogRequest createBlog) {
-//        try{
-//
-//        }
-//    }
+    @PatchMapping("/user/newBlog")
+    public ResponseEntity<?> createBlog(@RequestBody AddBlogRequest createBlog) throws BlogTitleExists {
+        try {
+            var blogResponse = userService.createNewBlog(createBlog);
+            return new ResponseEntity<>(blogResponse, HttpStatus.CREATED);
+        } catch (BlogTitleExists err) {
+            return new ResponseEntity<>(err.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

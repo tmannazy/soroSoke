@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Document
+@Document("BlogUsers")
 @NoArgsConstructor
 public class User {
     @Id
