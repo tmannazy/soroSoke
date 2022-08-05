@@ -54,6 +54,7 @@ class UserServiceImplTest {
         registerUserForm.setEmail("dorcas");
         registerUserForm.setPassword("iLoveJesus2022");
         userService.registerUser(registerUserForm);
+
     }
 
 }

@@ -4,11 +4,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 public class Blog {
     @Id
+    private String id;
     private String blogTitle;
-    private String userName;
-    private String password;
+    private List<Atiku> article;
 }
