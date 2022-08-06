@@ -2,7 +2,7 @@ package africa.semicolon.soroSoke.controllers;
 
 import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
 import africa.semicolon.soroSoke.dtos.requests.RegisterRequest;
-import africa.semicolon.soroSoke.exceptions.BlogTitleExists;
+import africa.semicolon.soroSoke.exceptions.BlogExistsException;
 import africa.semicolon.soroSoke.exceptions.UserExistsException;
 import africa.semicolon.soroSoke.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +29,14 @@ public class UserController {
     }
 
     @PatchMapping("/user/newBlog")
-    public ResponseEntity<?> createBlog(@RequestBody AddBlogRequest createBlog) throws BlogTitleExists {
+    public ResponseEntity<?> createBlog(@RequestBody AddBlogRequest createBlog) throws BlogExistsException {
         try {
             var blogResponse = userService.createNewBlog(createBlog);
             return new ResponseEntity<>(blogResponse, HttpStatus.CREATED);
-        } catch (BlogTitleExists err) {
+        } catch (BlogExistsException err) {
             return new ResponseEntity<>(err.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+
 }

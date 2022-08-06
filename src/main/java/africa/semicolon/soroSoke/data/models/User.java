@@ -18,6 +18,6 @@ public class User {
     private String userName;
     private String password;
     @DBRef
-    private List<Blog> blogs = new ArrayList<>();
+    private Blog blog ;
 
 }

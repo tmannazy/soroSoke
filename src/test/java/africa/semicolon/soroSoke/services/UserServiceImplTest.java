@@ -2,15 +2,17 @@ package africa.semicolon.soroSoke.services;
 
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
 import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
+import africa.semicolon.soroSoke.dtos.requests.LoginRequest;
 import africa.semicolon.soroSoke.dtos.requests.RegisterRequest;
-import africa.semicolon.soroSoke.exceptions.BlogTitleExists;
+import africa.semicolon.soroSoke.exceptions.BlogExistsException;
+import africa.semicolon.soroSoke.exceptions.InvalidUserNameOrPasswordException;
 import africa.semicolon.soroSoke.exceptions.UserExistsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
@@ -54,7 +56,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void userCanCreateNewBlogTest() throws UserExistsException, BlogTitleExists {
+    void userCanCreateNewBlogTest() throws UserExistsException, BlogExistsException {
         registerUserForm.setEmail("dorcas");
         registerUserForm.setPassword("iLoveJesus2022");
         userService.registerUser(registerUserForm);
@@ -63,6 +65,19 @@ class UserServiceImplTest {
         blogRequest.setUserName("dorcas");
         userService.createNewBlog(blogRequest);
         assertEquals(1,blogService.getNumberOfUserBlogs());
+    }
+
+    @Test
+    void userCanLoginTest() throws UserExistsException, InvalidUserNameOrPasswordException {
+        registerUserForm.setEmail("boyo");
+        registerUserForm.setPassword("amanpia2023");
+        userService.registerUser(registerUserForm);
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setPassword("Amanpia2023");
+        loginRequest.setUserName("Boyo");
+        var loggedUser = userService.userLogin(loginRequest);
+        assertEquals(1L, userRepository.count());
+        assertNotNull(loggedUser);
     }
 
 }
