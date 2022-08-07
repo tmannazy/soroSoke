@@ -19,9 +19,21 @@ public class BlogServiceImpl implements BlogService {
             newBlog.setBlogTitle(blogName.getBlogTitle());
             blogRepository.save(newBlog);
             return newBlog;
-        } else {
+        }
+        else {
             throw new BlogExistsException("User " + blogName.getUserName().toUpperCase() + " already has a blog.");
         }
+    }
+
+    @Override
+    public Blog getBlogByTitle(String title) {
+        var foundBlog = blogRepository.getBlogByBlogTitle(title);
+        return null;
+    }
+
+    @Override
+    public void deleteBlog(Blog blog) {
+        blogRepository.deleteBlogBy(blog);
     }
 
     @Override

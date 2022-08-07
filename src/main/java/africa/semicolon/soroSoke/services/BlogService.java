@@ -9,5 +9,10 @@ import org.springframework.stereotype.Service;
 public interface BlogService {
     Blog saveBlog(AddBlogRequest newBlog) throws BlogExistsException;
 
+    Blog getBlogByTitle(String title);
+
+    void deleteBlog(Blog blog);
+
+
     int getNumberOfUserBlogs();
 }

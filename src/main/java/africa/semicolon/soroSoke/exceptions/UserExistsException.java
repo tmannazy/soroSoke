@@ -1,6 +1,6 @@
 package africa.semicolon.soroSoke.exceptions;
 
-public class UserExistsException extends Throwable {
+public class UserExistsException extends RuntimeException {
     public UserExistsException(String message) {
         super(message);
     }

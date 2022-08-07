@@ -19,7 +19,16 @@ class BlogServiceImplTest {
     private BlogRepository blogRepository;
 
     @Test
-    void testForNewBlog_blogSizeIsOneTest() throws BlogExistsException {
+    void testForNewBlog_blogSizeIsOne() {
+        AddBlogRequest blogRequest = new AddBlogRequest();
+        blogRequest.setBlogTitle("Programming Is HARD");
+        blogRequest.setUserName("Tman");
+        blogService.saveBlog(blogRequest);
+        assertEquals(1L, blogRepository.count());
+    }
+
+    @Test
+    void testToCreateMultipleBlogThrowsException() {
         AddBlogRequest blogRequest = new AddBlogRequest();
         blogRequest.setBlogTitle("Programming Is HARD");
         blogRequest.setUserName("Tman");
@@ -33,8 +42,6 @@ class BlogServiceImplTest {
                 () -> blogService.saveBlog(blogRequest2));
         assertEquals("User TMAN already has a blog.", blogExist.getMessage());
         assertEquals(1L, blogRepository.count());
-
     }
-
 
 }

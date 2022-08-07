@@ -14,5 +14,5 @@ public class Blog {
     @Id
     private String id;
     private String blogTitle;
-    private List<Atiku> article;
+    private List<Atiku> articles;
 }

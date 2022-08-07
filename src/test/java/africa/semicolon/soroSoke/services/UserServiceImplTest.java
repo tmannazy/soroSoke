@@ -4,7 +4,6 @@ import africa.semicolon.soroSoke.data.repositories.UserRepository;
 import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
 import africa.semicolon.soroSoke.dtos.requests.LoginRequest;
 import africa.semicolon.soroSoke.dtos.requests.RegisterRequest;
-import africa.semicolon.soroSoke.dtos.responses.LoginResponse;
 import africa.semicolon.soroSoke.exceptions.BlogExistsException;
 import africa.semicolon.soroSoke.exceptions.InvalidUserNameOrPasswordException;
 import africa.semicolon.soroSoke.exceptions.UserExistsException;
@@ -94,5 +93,22 @@ class UserServiceImplTest {
                 () -> userService.createNewBlog(blogRequest2));
         assertEquals("User BOYO already has a blog.", blog.getMessage());
         assertEquals(1, blogService.getNumberOfUserBlogs());
+    }
+
+    @Test
+    void testThatUserCanUpdateBlogTitle() {
+        AddBlogRequest blogRequest = new AddBlogRequest();
+        blogRequest.setBlogTitle("Programming Is HARD");
+        blogRequest.setUserName("boyo");
+        userService.createNewBlog(blogRequest);
+        assertEquals(1L, blogService.getNumberOfUserBlogs());
+
+        AddBlogRequest blogRequest2 = new AddBlogRequest();
+        blogRequest2.setBlogTitle("Programming takes consistency, time & patience");
+        blogRequest2.setUserName("boyo");
+        var savedBlog = userService.createNewBlog(blogRequest2);
+        assertEquals(1L, blogService.getNumberOfUserBlogs());
+        assertEquals("Programming Is HARD blog title successfully updated with " +
+                     "Programming takes consistency, time & patience", savedBlog.getMessage());
     }
 }

@@ -4,5 +4,7 @@ import africa.semicolon.soroSoke.data.models.Blog;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface BlogRepository extends MongoRepository<Blog, String> {
+    Blog getBlogByBlogTitle(String title);
 
+    void deleteBlogBy(Blog blog);
 }

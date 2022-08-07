@@ -1,6 +1,5 @@
 package africa.semicolon.soroSoke.services;
 
-import africa.semicolon.soroSoke.data.models.Blog;
 import africa.semicolon.soroSoke.data.models.User;
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
 import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
@@ -43,14 +42,35 @@ public class UserServiceImpl implements UserService {
     public BlogResponse createNewBlog(AddBlogRequest createBlog) throws BlogExistsException {
         var validateUser = userRepository.findUserByUserNameIgnoreCase(createBlog.getUserName());
         BlogResponse blogResponse = new BlogResponse();
-        Blog blog = new Blog();
         if (validateUser == null) {
+            throw new BlogExistsException(createBlog.getUserName() + " does not exist! Create an account.");
+        }
+
+        if (validateUser.getBlog() == null) {
+            var newBlog = blogService.saveBlog(createBlog);
+            newBlog.setBlogTitle(createBlog.getBlogTitle());
+            validateUser.setBlog(newBlog);
+            userRepository.save(validateUser);
+            blogResponse.setMessage("Blog with " + createBlog.getBlogTitle() + " successfully created.");
+            return blogResponse;
+        }
+
+        if (!Objects.equals(validateUser.getBlog().getBlogTitle(), " ")) {
+            var newBlog = blogService.getBlogByTitle(validateUser.getBlog().getBlogTitle());
+            blogResponse.setMessage(validateUser.getBlog().getBlogTitle() +
+                                    " blog title successfully updated with " + createBlog.getBlogTitle());
+            validateUser.setBlog(newBlog);
+            blogService.deleteBlog(newBlog);
+            blogService.saveBlog(createBlog);
+            userRepository.save(validateUser);
+            return blogResponse;
+        }
+
+        if (validateUser.getBlog() != null) {
             throw new BlogExistsException(createBlog.getUserName() + " has a blog.");
         }
-        blogService.saveBlog(createBlog);
-        blog.setBlogTitle(createBlog.getBlogTitle());
-        blogResponse.setMessage("Blog with " + createBlog.getBlogTitle() + " successfully created.");
-        return blogResponse;
+
+        return null;
     }
 
     @Override
