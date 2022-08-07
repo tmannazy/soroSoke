@@ -10,6 +10,7 @@ import africa.semicolon.soroSoke.dtos.responses.BlogResponse;
 import africa.semicolon.soroSoke.dtos.responses.LoginResponse;
 import africa.semicolon.soroSoke.dtos.responses.RegisterUserResponse;
 import africa.semicolon.soroSoke.exceptions.BlogExistsException;
+import africa.semicolon.soroSoke.exceptions.InvalidUserNameOrPasswordException;
 import africa.semicolon.soroSoke.exceptions.UserExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,41 +35,37 @@ public class UserServiceImpl implements UserService {
         user.setUserName(registerRequest.getEmail());
         user.setPassword(registerRequest.getPassword());
         userRepository.save(user);
+        response.setMessage(registerRequest.getEmail() + " successfully registered. Welcome!!!");
         return response;
     }
 
     @Override
     public BlogResponse createNewBlog(AddBlogRequest createBlog) throws BlogExistsException {
         var validateUser = userRepository.findUserByUserNameIgnoreCase(createBlog.getUserName());
-        var validateBlogName = blogService.checkIfUserHasBlog();
-        if (validateBlogName) throw new BlogExistsException(validateUser.getUserName() + " has a blog.");
-        Blog newBlog = new Blog();
-        newBlog.setBlogTitle(createBlog.getBlogTitle());
-        blogService.saveBlog(newBlog);
-        userRepository.save(validateUser);
-
         BlogResponse blogResponse = new BlogResponse();
-        blogResponse.setMessage("User with " + createBlog.getBlogTitle() + " successfully registered.");
+        Blog blog = new Blog();
+        if (validateUser == null) {
+            throw new BlogExistsException(createBlog.getUserName() + " has a blog.");
+        }
+        blogService.saveBlog(createBlog);
+        blog.setBlogTitle(createBlog.getBlogTitle());
+        blogResponse.setMessage("Blog with " + createBlog.getBlogTitle() + " successfully created.");
         return blogResponse;
     }
 
     @Override
-    public LoginResponse userLogin(LoginRequest loginRequest) {
+    public LoginResponse userLogin(LoginRequest loginRequest) throws InvalidUserNameOrPasswordException {
         var user = userRepository.findUserByUserNameIgnoreCase(loginRequest.getUserName());
         LoginResponse loginResponse = new LoginResponse();
         if (user == null) {
-            loginResponse.setMessage("Username or password incorrect. Try again");
-            return null;
+            throw new InvalidUserNameOrPasswordException("Username or password incorrect. Try again");
         }
-        if (!user.getPassword().equals(loginRequest.getPassword())) {
-            loginResponse.setMessage("Username or password incorrect. Try again");
+        if (!Objects.equals(user.getPassword(), loginRequest.getPassword())) {
+            throw new InvalidUserNameOrPasswordException("Username or password incorrect. Try again");
         } else {
-            loginResponse.setMessage("Welcome " + loginRequest.getUserName());
+            loginResponse.setMessage("Welcome " + loginRequest.getUserName() + "!");
         }
         return loginResponse;
     }
 
 }
-
-
-//}

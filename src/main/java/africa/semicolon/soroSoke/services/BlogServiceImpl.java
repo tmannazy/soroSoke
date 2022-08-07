@@ -2,29 +2,26 @@ package africa.semicolon.soroSoke.services;
 
 import africa.semicolon.soroSoke.data.models.Blog;
 import africa.semicolon.soroSoke.data.repositories.BlogRepository;
+import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
+import africa.semicolon.soroSoke.exceptions.BlogExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BlogServiceImpl implements BlogService {
-    private int size = 1;
     @Autowired
     private BlogRepository blogRepository;
 
     @Override
-    public Blog saveBlog(Blog blogName) {
+    public Blog saveBlog(AddBlogRequest blogName) throws BlogExistsException {
         Blog newBlog = new Blog();
-        if (size <= 1) {
+        if (blogRepository.count() < 1) {
             newBlog.setBlogTitle(blogName.getBlogTitle());
             blogRepository.save(newBlog);
-            size++;
+            return newBlog;
+        } else {
+            throw new BlogExistsException("User " + blogName.getUserName().toUpperCase() + " already has a blog.");
         }
-        return newBlog;
-    }
-
-    @Override
-    public boolean checkIfUserHasBlog() {
-        return blogRepository.count() >= size;
     }
 
     @Override
