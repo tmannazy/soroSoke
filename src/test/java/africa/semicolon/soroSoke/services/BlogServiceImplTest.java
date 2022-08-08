@@ -3,6 +3,7 @@ package africa.semicolon.soroSoke.services;
 import africa.semicolon.soroSoke.data.repositories.BlogRepository;
 import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
 import africa.semicolon.soroSoke.exceptions.BlogExistsException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,11 @@ class BlogServiceImplTest {
 
     @Autowired
     private BlogRepository blogRepository;
+
+    @AfterEach
+    void tearDown() {
+        blogRepository.deleteAll();
+    }
 
     @Test
     void testForNewBlog_blogSizeIsOne() {

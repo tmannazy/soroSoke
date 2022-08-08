@@ -18,6 +18,5 @@ public class User {
     private String userName;
     private String password;
     @DBRef
-    private Blog blog ;
-
+    private Blog blog;
 }

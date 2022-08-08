@@ -13,6 +13,5 @@ public interface BlogService {
 
     void deleteBlog(Blog blog);
 
-
     int getNumberOfUserBlogs();
 }
