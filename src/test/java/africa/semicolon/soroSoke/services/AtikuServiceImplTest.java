@@ -106,13 +106,10 @@ class AtikuServiceImplTest {
         assertEquals(1L,atikuRepository.count());
         assertEquals(2L,commentService.getNumberOfComments());
 
-        System.out.println(atikuService.getAllArticles());
-        var commentToDel = savedComment2.getId();
-//        atikuService.deleteComment(atikuFound2.getId(), commentToDel);
-        commentService.deleteComment(commentToDel);
-        System.out.println(atikuService.getAllArticles());
-
+        var commentToDel = atikuFound2.getComments().get(0).getId();
+        atikuService.deleteComment(commentToDel);
         assertEquals(1L,commentService.getNumberOfComments());
+        assertEquals(1L,atikuRepository.count());
 
     }
 }

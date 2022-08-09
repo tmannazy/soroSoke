@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class AtikuServiceImpl implements AtikuService {
@@ -35,14 +34,7 @@ public class AtikuServiceImpl implements AtikuService {
     }
 
     @Override
-    public void deleteComment(String articleId, String commentToDel) {
-        var comments = atikuRepository.findById(articleId).get().getComments();
-        for (var comment : comments) {
-            if (Objects.equals(comment.getId(), commentToDel)) {
-                comments.remove(comment);
-                break;
-            }
-        }
+    public void deleteComment(String commentToDel) {
         commentService.deleteComment(commentToDel);
     }
 }
