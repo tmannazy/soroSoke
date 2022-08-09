@@ -40,4 +40,9 @@ public class BlogServiceImpl implements BlogService {
     public int getNumberOfUserBlogs() {
         return (int) blogRepository.count();
     }
+
+    @Override
+    public Blog getBlog() {
+        return blogRepository.findAll().get(0);
+    }
 }

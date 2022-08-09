@@ -3,6 +3,7 @@ package africa.semicolon.soroSoke.services;
 import africa.semicolon.soroSoke.data.repositories.BlogRepository;
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
 import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
+import africa.semicolon.soroSoke.dtos.requests.AtikuRequest;
 import africa.semicolon.soroSoke.dtos.requests.LoginRequest;
 import africa.semicolon.soroSoke.dtos.requests.RegisterRequest;
 import africa.semicolon.soroSoke.exceptions.BlogExistsException;
@@ -28,14 +29,16 @@ class UserServiceImplTest {
     @Autowired
     private BlogRepository blogRepository;
 
+    @Autowired
+    private AtikuService atikuService;
+    @Autowired
+    private BlogService blogService;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAll();
         blogRepository.deleteAll();
     }
-
-    @Autowired
-    private BlogService blogService;
 
     @BeforeEach
     void setUp() throws UserExistsException {
@@ -125,4 +128,17 @@ class UserServiceImplTest {
                      "Programming takes consistency, time & patience", savedBlog.getMessage());
     }
 
+    @Test
+    void testThatUserCanCreateBlogAndAddArticle() {
+        AddBlogRequest blogRequest = new AddBlogRequest();
+        blogRequest.setBlogTitle("All About Programming");
+        blogRequest.setUserName("boyo");
+        userService.createNewBlog(blogRequest);
+        assertEquals(1, blogService.getNumberOfUserBlogs());
+
+        AtikuRequest newRequest = new AtikuRequest();
+        newRequest.setTitle("Welcome to Programming 101");
+        var blog = userService.addArticle(newRequest);
+        assertEquals("Welcome to Programming 101", blog.getArticles().get(0).getTitle());
+    }
 }

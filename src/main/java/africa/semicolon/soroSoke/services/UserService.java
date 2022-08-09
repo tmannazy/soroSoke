@@ -1,7 +1,8 @@
 package africa.semicolon.soroSoke.services;
 
-import africa.semicolon.soroSoke.data.models.User;
+import africa.semicolon.soroSoke.data.models.Blog;
 import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
+import africa.semicolon.soroSoke.dtos.requests.AtikuRequest;
 import africa.semicolon.soroSoke.dtos.requests.LoginRequest;
 import africa.semicolon.soroSoke.dtos.requests.RegisterRequest;
 import africa.semicolon.soroSoke.dtos.responses.BlogResponse;
@@ -19,4 +20,8 @@ public interface UserService {
     BlogResponse createNewBlog(AddBlogRequest createBlog) throws BlogExistsException;
 
     LoginResponse userLogin(LoginRequest loginRequest) throws InvalidUserNameOrPasswordException;
+
+    Blog addArticle(AtikuRequest request);
+
+    Blog getBlog();
 }

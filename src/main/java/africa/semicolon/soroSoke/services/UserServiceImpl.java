@@ -1,8 +1,11 @@
 package africa.semicolon.soroSoke.services;
 
+import africa.semicolon.soroSoke.data.models.Atiku;
+import africa.semicolon.soroSoke.data.models.Blog;
 import africa.semicolon.soroSoke.data.models.User;
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
 import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
+import africa.semicolon.soroSoke.dtos.requests.AtikuRequest;
 import africa.semicolon.soroSoke.dtos.requests.LoginRequest;
 import africa.semicolon.soroSoke.dtos.requests.RegisterRequest;
 import africa.semicolon.soroSoke.dtos.responses.BlogResponse;
@@ -23,6 +26,9 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private BlogService blogService;
+
+    @Autowired
+    private AtikuService atikuService;
 
     @Override
     public RegisterUserResponse registerUser(RegisterRequest registerRequest) throws UserExistsException {
@@ -85,6 +91,22 @@ public class UserServiceImpl implements UserService {
             loginResponse.setMessage("Welcome " + loginRequest.getUserName() + "!");
         }
         return loginResponse;
+    }
+
+    @Override
+    public Blog addArticle(AtikuRequest request) {
+        Atiku newAtiku = new Atiku();
+        var foundBlog = blogService.getBlog();
+        newAtiku.setTitle(request.getTitle());
+        newAtiku.setTime(request.getTime());
+        atikuService.saveArticle(newAtiku);
+        foundBlog.getArticles().add(newAtiku);
+        return foundBlog;
+    }
+
+    @Override
+    public Blog getBlog() {
+        return blogService.getBlog();
     }
 
 }
