@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BlogResponse createNewBlog(AddBlogRequest createBlog) throws BlogExistsException {
+    public BlogResponse createNewBlog(AddBlogRequest createBlog) throws BlogExistsException, NullPointerException {
         var validateUser = userRepository.findUserByUserNameIgnoreCase(createBlog.getUserName());
         BlogResponse blogResponse = new BlogResponse();
         if (validateUser == null) {
@@ -55,21 +55,20 @@ public class UserServiceImpl implements UserService {
             return blogResponse;
         }
 
-        if (!Objects.equals(validateUser.getBlog().getBlogTitle(), " ")) {
+        if (validateUser.getBlog() != null && createBlog.getEditTitle() == null) {
+            throw new NullPointerException("User " + createBlog.getUserName().toUpperCase() + " has a blog.");
+        }
+
+        if (!validateUser.getBlog().getBlogTitle().isEmpty()) {
             var newBlog = blogService.getBlogByTitle(validateUser.getBlog().getBlogTitle());
             blogResponse.setMessage(validateUser.getBlog().getBlogTitle() +
-                                    " blog title successfully updated with " + createBlog.getBlogTitle());
+                                    " blog title successfully updated with " + createBlog.getEditTitle());
             validateUser.setBlog(newBlog);
             blogService.deleteBlog(newBlog);
             blogService.saveBlog(createBlog);
             userRepository.save(validateUser);
             return blogResponse;
         }
-
-        if (validateUser.getBlog() != null) {
-            throw new BlogExistsException(createBlog.getUserName() + " has a blog.");
-        }
-
         return null;
     }
 

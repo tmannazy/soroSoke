@@ -32,7 +32,6 @@ class AtikuServiceImplTest {
     void tearDown() {
         atikuRepository.deleteAll();
         commentRepository.deleteAll();
-
     }
 
     @Test

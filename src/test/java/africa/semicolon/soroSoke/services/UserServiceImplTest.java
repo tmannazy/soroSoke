@@ -1,5 +1,6 @@
 package africa.semicolon.soroSoke.services;
 
+import africa.semicolon.soroSoke.data.repositories.BlogRepository;
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
 import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
 import africa.semicolon.soroSoke.dtos.requests.LoginRequest;
@@ -24,9 +25,13 @@ class UserServiceImplTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private BlogRepository blogRepository;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAll();
+        blogRepository.deleteAll();
     }
 
     @Autowired
@@ -95,9 +100,11 @@ class UserServiceImplTest {
         AddBlogRequest blogRequest2 = new AddBlogRequest();
         blogRequest2.setBlogTitle("How to make $1 billion");
         blogRequest2.setUserName("boyo");
-        BlogExistsException blog = assertThrows(BlogExistsException.class,
+//        BlogExistsException blog = assertThrows(BlogExistsException.class,
+//                () -> userService.createNewBlog(blogRequest2));
+        NullPointerException blog = assertThrows(NullPointerException.class,
                 () -> userService.createNewBlog(blogRequest2));
-        assertEquals("User BOYO already has a blog.", blog.getMessage());
+        assertEquals("User BOYO has a blog.", blog.getMessage());
         assertEquals(1, blogService.getNumberOfUserBlogs());
     }
 
@@ -110,11 +117,12 @@ class UserServiceImplTest {
         assertEquals(1L, blogService.getNumberOfUserBlogs());
 
         AddBlogRequest blogRequest2 = new AddBlogRequest();
-        blogRequest2.setBlogTitle("Programming takes consistency, time & patience");
+        blogRequest2.setEditTitle("Programming takes consistency, time & patience");
         blogRequest2.setUserName("boyo");
         var savedBlog = userService.createNewBlog(blogRequest2);
         assertEquals(1L, blogService.getNumberOfUserBlogs());
         assertEquals("Programming Is HARD blog title successfully updated with " +
                      "Programming takes consistency, time & patience", savedBlog.getMessage());
     }
+
 }
