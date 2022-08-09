@@ -27,13 +27,13 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Blog getBlogByTitle(String title) {
-        var foundBlog = blogRepository.getBlogByBlogTitle(title);
-        return null;
+        var foundBlog = blogRepository.getBlogByBlogTitleIgnoreCase(title);
+        return foundBlog;
     }
 
     @Override
     public void deleteBlog(Blog blog) {
-        blogRepository.deleteBlogBy(blog);
+        blogRepository.delete(blog);
     }
 
     @Override

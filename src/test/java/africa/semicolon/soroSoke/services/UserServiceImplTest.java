@@ -7,6 +7,7 @@ import africa.semicolon.soroSoke.dtos.requests.RegisterRequest;
 import africa.semicolon.soroSoke.exceptions.BlogExistsException;
 import africa.semicolon.soroSoke.exceptions.InvalidUserNameOrPasswordException;
 import africa.semicolon.soroSoke.exceptions.UserExistsException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,11 @@ class UserServiceImplTest {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
+
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteAll();
+    }
 
     @Autowired
     private BlogService blogService;
@@ -87,7 +93,7 @@ class UserServiceImplTest {
         assertEquals(1, blogService.getNumberOfUserBlogs());
 
         AddBlogRequest blogRequest2 = new AddBlogRequest();
-        blogRequest2.setBlogTitle("Programming is Hard");
+        blogRequest2.setBlogTitle("How to make $1 billion");
         blogRequest2.setUserName("boyo");
         BlogExistsException blog = assertThrows(BlogExistsException.class,
                 () -> userService.createNewBlog(blogRequest2));

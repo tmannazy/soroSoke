@@ -18,6 +18,6 @@ public class Atiku {
     private String id;
     private String title;
     private String time;
-//    @DBRef
+    @DBRef
     private List<Comment> comments = new ArrayList<>();
 }

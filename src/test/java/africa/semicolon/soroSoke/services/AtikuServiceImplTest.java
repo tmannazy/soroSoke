@@ -3,6 +3,7 @@ package africa.semicolon.soroSoke.services;
 import africa.semicolon.soroSoke.data.models.Atiku;
 import africa.semicolon.soroSoke.data.models.Comment;
 import africa.semicolon.soroSoke.data.repositories.AtikuRepository;
+import africa.semicolon.soroSoke.data.repositories.CommentRepository;
 import africa.semicolon.soroSoke.dtos.requests.AtikuRequest;
 import africa.semicolon.soroSoke.dtos.requests.CommentRequest;
 import org.junit.jupiter.api.AfterEach;
@@ -18,9 +19,20 @@ class AtikuServiceImplTest {
     @Autowired
     private AtikuRepository atikuRepository;
 
+    @Autowired
+    private AtikuService atikuService;
+
+    @Autowired
+    private CommentService commentService;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
     @AfterEach
     void tearDown() {
         atikuRepository.deleteAll();
+        commentRepository.deleteAll();
+
     }
 
     @Test
@@ -30,9 +42,8 @@ class AtikuServiceImplTest {
         atikuRequest.setTitle("Grit");
         newAtiku.setTime(atikuRequest.getTime());
         newAtiku.setTitle(atikuRequest.getTitle());
-        atikuRepository.save(newAtiku);
-        System.out.println(newAtiku);
-        assertEquals(1L, atikuRepository.count());
+        atikuService.saveArticle(newAtiku);
+        assertEquals(1L, atikuService.getNumberOfArticles());
     }
 
     @Test
@@ -42,7 +53,7 @@ class AtikuServiceImplTest {
         atikuRequest.setTitle("Grit");
         newAtiku.setTime(atikuRequest.getTime());
         newAtiku.setTitle(atikuRequest.getTitle());
-        atikuRepository.save(newAtiku);
+        atikuService.saveArticle(newAtiku);
 
         CommentRequest commentRequest = new CommentRequest();
         Comment newComment = new Comment();
@@ -50,15 +61,58 @@ class AtikuServiceImplTest {
         commentRequest.setCommentMessage("It takes only GRIT to get over life challenges.");
         newComment.setArticleTitle(commentRequest.getArticleTitle());
         newComment.setComment(commentRequest.getCommentMessage());
-        newComment.setId("122");
         newComment.setTime(commentRequest.getTime());
-        var atikuFound = atikuRepository.getAtikuByTitleIgnoreCase(commentRequest.getArticleTitle());
-        atikuFound.getComments().add(newComment);
+        var atikuFound = atikuService.getArticleByTitle(commentRequest.getArticleTitle());
+        var savedComment = commentService.saveComment(newComment);
+        atikuFound.getComments().add(savedComment);
         atikuRepository.save(atikuFound);
-        assertEquals(1L, atikuRepository.count());
+        assertEquals(1L, atikuService.getNumberOfArticles());
         assertEquals("It takes only GRIT to get over life challenges.",
-                atikuRepository.findAll().get(0).getComments().get(0).getComment());
+                atikuService.getAllArticles().get(0).getComments().get(0).getComment());
     }
 
+    @Test
+    void testToAddCommentsXAndY_toArticle_deleteX_sizeIsOne() {
+        AtikuRequest atikuRequest = new AtikuRequest();
+        Atiku newAtiku = new Atiku();
+        atikuRequest.setTitle("Grit");
+        newAtiku.setTime(atikuRequest.getTime());
+        newAtiku.setTitle(atikuRequest.getTitle());
+        atikuService.saveArticle(newAtiku);
 
+        CommentRequest commentRequest = new CommentRequest();
+        Comment newComment = new Comment();
+        commentRequest.setArticleTitle("GriT");
+        commentRequest.setCommentMessage("It takes only GRIT to get over life challenges.");
+        newComment.setArticleTitle(commentRequest.getArticleTitle());
+        newComment.setComment(commentRequest.getCommentMessage());
+        newComment.setTime(commentRequest.getTime());
+        var atikuFound = atikuService.getArticleByTitle(commentRequest.getArticleTitle());
+        var savedComment = commentService.saveComment(newComment);
+        atikuFound.getComments().add(savedComment);
+        atikuService.saveArticle(atikuFound);
+
+        CommentRequest commentRequest2 = new CommentRequest();
+        Comment newComment2 = new Comment();
+        commentRequest2.setArticleTitle("Grit");
+        commentRequest2.setCommentMessage("God over everything.");
+        newComment2.setArticleTitle(commentRequest2.getArticleTitle());
+        newComment2.setComment(commentRequest2.getCommentMessage());
+        newComment2.setTime(commentRequest2.getTime());
+        var atikuFound2 = atikuService.getArticleByTitle(commentRequest2.getArticleTitle());
+        var savedComment2 = commentService.saveComment(newComment2);
+        atikuFound2.getComments().add(savedComment2);
+        atikuService.saveArticle(atikuFound2);
+        assertEquals(1L,atikuRepository.count());
+        assertEquals(2L,commentService.getNumberOfComments());
+
+        System.out.println(atikuService.getAllArticles());
+        var commentToDel = savedComment2.getId();
+//        atikuService.deleteComment(atikuFound2.getId(), commentToDel);
+        commentService.deleteComment(commentToDel);
+        System.out.println(atikuService.getAllArticles());
+
+        assertEquals(1L,commentService.getNumberOfComments());
+
+    }
 }
