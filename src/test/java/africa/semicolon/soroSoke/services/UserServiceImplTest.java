@@ -141,4 +141,25 @@ class UserServiceImplTest {
         var blog = userService.addArticle(newRequest);
         assertEquals("Welcome to Programming 101", blog.getArticles().get(0).getTitle());
     }
+
+    @Test
+    void testToDeleteAnArticle() {
+        AddBlogRequest blogRequest = new AddBlogRequest();
+        blogRequest.setBlogTitle("All About Programming");
+        blogRequest.setUserName("boyo");
+        userService.createNewBlog(blogRequest);
+        assertEquals(1, blogService.getNumberOfUserBlogs());
+
+        AtikuRequest newRequest = new AtikuRequest();
+        newRequest.setTitle("Welcome to Programming 101");
+        userService.addArticle(newRequest);
+        AtikuRequest newRequest2 = new AtikuRequest();
+        newRequest2.setTitle("How to Think Like A Programmer");
+        var blog = userService.addArticle(newRequest2);
+        assertEquals(2, atikuService.getNumberOfArticles());
+
+        userService.deleteArticle("welcome to Programming 101");
+        assertEquals("How to Think Like A Programmer", blog.getArticles().get(0).getTitle());
+        assertEquals(1, atikuService.getNumberOfArticles());
+    }
 }

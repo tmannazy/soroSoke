@@ -14,4 +14,6 @@ public interface AtikuService {
     int getNumberOfArticles();
 
     void deleteComment(String commentToDel);
+
+    void deleteArticle(String articleToDelete);
 }

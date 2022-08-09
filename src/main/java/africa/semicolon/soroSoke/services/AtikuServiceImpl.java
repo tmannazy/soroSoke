@@ -11,12 +11,14 @@ import java.util.List;
 public class AtikuServiceImpl implements AtikuService {
 
     @Autowired
+    CommentService commentService;
+    @Autowired
     private AtikuRepository atikuRepository;
 
-    @Autowired CommentService commentService;
-
     @Override
-    public Atiku saveArticle(Atiku newAtiku) {return atikuRepository.save(newAtiku);}
+    public Atiku saveArticle(Atiku newAtiku) {
+        return atikuRepository.save(newAtiku);
+    }
 
     @Override
     public Atiku getArticleByTitle(String articleTitle) {
@@ -36,5 +38,15 @@ public class AtikuServiceImpl implements AtikuService {
     @Override
     public void deleteComment(String commentToDel) {
         commentService.deleteComment(commentToDel);
+    }
+
+    @Override
+    public void deleteArticle(String articleToDelete) {
+        for (var article : getAllArticles()) {
+            if (article.getTitle().equalsIgnoreCase(articleToDelete)) {
+                atikuRepository.delete(article);
+                break;
+            }
+        }
     }
 }

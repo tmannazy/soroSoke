@@ -109,4 +109,9 @@ public class UserServiceImpl implements UserService {
         return blogService.getBlog();
     }
 
+    @Override
+    public void deleteArticle(String articleToDelete) {
+        atikuService.deleteArticle(articleToDelete);
+    }
+
 }

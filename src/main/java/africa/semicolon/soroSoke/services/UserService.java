@@ -24,4 +24,6 @@ public interface UserService {
     Blog addArticle(AtikuRequest request);
 
     Blog getBlog();
+
+    void deleteArticle(String articleToDelete);
 }
