@@ -1,16 +1,23 @@
 package africa.semicolon.soroSoke.services;
 
+import africa.semicolon.soroSoke.data.models.Atiku;
 import africa.semicolon.soroSoke.data.models.Blog;
 import africa.semicolon.soroSoke.data.repositories.BlogRepository;
 import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
+import africa.semicolon.soroSoke.dtos.requests.AtikuRequest;
 import africa.semicolon.soroSoke.exceptions.BlogExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class BlogServiceImpl implements BlogService {
     @Autowired
     private BlogRepository blogRepository;
+
+    @Autowired
+    private AtikuService atikuService;
 
     @Override
     public Blog saveBlog(AddBlogRequest blogName) throws BlogExistsException {
@@ -23,6 +30,11 @@ public class BlogServiceImpl implements BlogService {
         else {
             throw new BlogExistsException("User " + blogName.getUserName().toUpperCase() + " already has a blog.");
         }
+    }
+
+    @Override
+    public Blog saveBlog(Blog newBlog) {
+        return blogRepository.save(newBlog);
     }
 
     @Override
@@ -42,7 +54,16 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public Blog getBlog() {
-        return blogRepository.findAll().get(0);
+    public List<Blog> getBlog() {
+        return blogRepository.findAll();
+    }
+
+    @Override
+    public Atiku addArticle(AtikuRequest request) {
+        Atiku newAtiku = new Atiku();
+        newAtiku.setTitle(request.getTitle());
+        newAtiku.setTime(request.getTime());
+        newAtiku.setBody(request.getBody());
+        return atikuService.saveArticle(newAtiku);
     }
 }

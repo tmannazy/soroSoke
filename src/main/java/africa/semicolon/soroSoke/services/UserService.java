@@ -1,17 +1,15 @@
 package africa.semicolon.soroSoke.services;
 
 import africa.semicolon.soroSoke.data.models.Blog;
-import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
-import africa.semicolon.soroSoke.dtos.requests.AtikuRequest;
-import africa.semicolon.soroSoke.dtos.requests.LoginRequest;
-import africa.semicolon.soroSoke.dtos.requests.RegisterRequest;
-import africa.semicolon.soroSoke.dtos.responses.BlogResponse;
-import africa.semicolon.soroSoke.dtos.responses.LoginResponse;
-import africa.semicolon.soroSoke.dtos.responses.RegisterUserResponse;
+import africa.semicolon.soroSoke.dtos.requests.*;
+import africa.semicolon.soroSoke.dtos.responses.*;
+import africa.semicolon.soroSoke.exceptions.ArticleRequestException;
 import africa.semicolon.soroSoke.exceptions.BlogExistsException;
 import africa.semicolon.soroSoke.exceptions.InvalidUserNameOrPasswordException;
 import africa.semicolon.soroSoke.exceptions.UserExistsException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public interface UserService {
@@ -21,9 +19,11 @@ public interface UserService {
 
     LoginResponse userLogin(LoginRequest loginRequest) throws InvalidUserNameOrPasswordException;
 
-    Blog addArticle(AtikuRequest request);
+    AtikuResponse addArticle(AtikuRequest request) throws ArticleRequestException;
 
-    Blog getBlog();
+    List<AllBlogResponse> getBlog();
 
     void deleteArticle(String articleToDelete);
+
+    Blog addComment(CommentRequest commentRequest);
 }

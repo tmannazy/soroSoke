@@ -17,6 +17,7 @@ public class Atiku {
     @Id
     private String id;
     private String title;
+    private String body;
     private String time;
     @DBRef
     private List<Comment> comments = new ArrayList<>();

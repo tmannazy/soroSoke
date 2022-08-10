@@ -2,10 +2,8 @@ package africa.semicolon.soroSoke.services;
 
 import africa.semicolon.soroSoke.data.repositories.BlogRepository;
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
-import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
-import africa.semicolon.soroSoke.dtos.requests.AtikuRequest;
-import africa.semicolon.soroSoke.dtos.requests.LoginRequest;
-import africa.semicolon.soroSoke.dtos.requests.RegisterRequest;
+import africa.semicolon.soroSoke.dtos.requests.*;
+import africa.semicolon.soroSoke.exceptions.ArticleRequestException;
 import africa.semicolon.soroSoke.exceptions.BlogExistsException;
 import africa.semicolon.soroSoke.exceptions.InvalidUserNameOrPasswordException;
 import africa.semicolon.soroSoke.exceptions.UserExistsException;
@@ -87,7 +85,7 @@ class UserServiceImplTest {
     void userCanCreateNewBlogTest() throws BlogExistsException {
         AddBlogRequest blogRequest = new AddBlogRequest();
         blogRequest.setBlogTitle("Programming is Hard");
-        blogRequest.setUserName("boyo");
+        blogRequest.setUserName("BoYo");
         userService.createNewBlog(blogRequest);
         assertEquals(1, blogService.getNumberOfUserBlogs());
     }
@@ -129,7 +127,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testThatUserCanCreateBlogAndAddArticle() {
+    void testThatUserCanCreateBlogAndAddArticle() throws ArticleRequestException {
         AddBlogRequest blogRequest = new AddBlogRequest();
         blogRequest.setBlogTitle("All About Programming");
         blogRequest.setUserName("boyo");
@@ -138,12 +136,42 @@ class UserServiceImplTest {
 
         AtikuRequest newRequest = new AtikuRequest();
         newRequest.setTitle("Welcome to Programming 101");
-        var blog = userService.addArticle(newRequest);
-        assertEquals("Welcome to Programming 101", blog.getArticles().get(0).getTitle());
+        newRequest.setBody("Here we are going to go on a journey to introduce you to the world of programming.");
+        newRequest.setUserName("Boyo");
+        userService.addArticle(newRequest);
+        assertEquals("Welcome to Programming 101", userRepository.findUserByUserNameIgnoreCase("Boyo").
+                getBlog().getArticles().get(0).getTitle());
+        assertEquals(1L, blogService.getNumberOfUserBlogs());
+
+
     }
 
     @Test
-    void testToDeleteAnArticle() {
+    void testToDeleteAnArticle() throws ArticleRequestException {
+        AddBlogRequest blogRequest = new AddBlogRequest();
+        blogRequest.setBlogTitle("All About Programming");
+        blogRequest.setUserName("boyo");
+        userService.createNewBlog(blogRequest);
+//        userService.getAllUsers()
+        assertEquals(1, blogService.getNumberOfUserBlogs());
+
+        AtikuRequest newRequest = new AtikuRequest();
+        newRequest.setTitle("Welcome to Programming 101");
+//        newRequest.set
+        userService.addArticle(newRequest);
+        AtikuRequest newRequest2 = new AtikuRequest();
+        newRequest2.setTitle("How to Think Like A Programmer");
+        var blog = userService.addArticle(newRequest2);
+        assertEquals(2, atikuService.getNumberOfArticles());
+
+//        System.out.println(userService.getBlog().get(0).getArticles());
+        userService.deleteArticle("welcome to Programming 101");
+//        assertEquals("How to Think Like A Programmer", blog.getArticles().get(0).getTitle());
+        assertEquals(1, atikuService.getNumberOfArticles());
+    }
+
+    @Test
+    void testToAddACommentToArticle() throws ArticleRequestException {
         AddBlogRequest blogRequest = new AddBlogRequest();
         blogRequest.setBlogTitle("All About Programming");
         blogRequest.setUserName("boyo");
@@ -153,13 +181,20 @@ class UserServiceImplTest {
         AtikuRequest newRequest = new AtikuRequest();
         newRequest.setTitle("Welcome to Programming 101");
         userService.addArticle(newRequest);
+
         AtikuRequest newRequest2 = new AtikuRequest();
         newRequest2.setTitle("How to Think Like A Programmer");
-        var blog = userService.addArticle(newRequest2);
+        userService.addArticle(newRequest2);
         assertEquals(2, atikuService.getNumberOfArticles());
 
-        userService.deleteArticle("welcome to Programming 101");
-        assertEquals("How to Think Like A Programmer", blog.getArticles().get(0).getTitle());
-        assertEquals(1, atikuService.getNumberOfArticles());
+        CommentRequest commentRequest = new CommentRequest();
+        commentRequest.setCommentMessage("First step to be a programmer is to change your thinking pattern.");
+        commentRequest.setArticleTitle("How to Think Like A Programmer");
+        var blog = userService.addComment(commentRequest);
+        assertEquals(1, blogService.getNumberOfUserBlogs());
+
+        System.out.println(blog.getArticles().get(0));
+//        assertEquals(" ", userService.getBlog().get(0).getArticles());
+
     }
 }

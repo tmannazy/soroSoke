@@ -61,7 +61,9 @@ class AtikuServiceImplTest {
         newComment.setArticleTitle(commentRequest.getArticleTitle());
         newComment.setComment(commentRequest.getCommentMessage());
         newComment.setTime(commentRequest.getTime());
+        atikuService.saveComment(commentRequest);
         var atikuFound = atikuService.getArticleByTitle(commentRequest.getArticleTitle());
+
         var savedComment = commentService.saveComment(newComment);
         atikuFound.getComments().add(savedComment);
         atikuRepository.save(atikuFound);

@@ -2,6 +2,7 @@ package africa.semicolon.soroSoke.services;
 
 import africa.semicolon.soroSoke.data.repositories.BlogRepository;
 import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
+import africa.semicolon.soroSoke.dtos.requests.AtikuRequest;
 import africa.semicolon.soroSoke.exceptions.BlogExistsException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,11 @@ class BlogServiceImplTest {
                 () -> blogService.saveBlog(blogRequest2));
         assertEquals("User TMAN already has a blog.", blogExist.getMessage());
         assertEquals(1L, blogRepository.count());
+    }
+
+    @Test
+    void testToCreateArticle() {
+//        blogService.addArticle(AtikuRequest newArticle);
     }
 
 }

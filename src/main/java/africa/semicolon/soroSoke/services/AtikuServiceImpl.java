@@ -1,7 +1,9 @@
 package africa.semicolon.soroSoke.services;
 
 import africa.semicolon.soroSoke.data.models.Atiku;
+import africa.semicolon.soroSoke.data.models.Comment;
 import africa.semicolon.soroSoke.data.repositories.AtikuRepository;
+import africa.semicolon.soroSoke.dtos.requests.CommentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,5 +50,19 @@ public class AtikuServiceImpl implements AtikuService {
                 break;
             }
         }
+    }
+
+    @Override
+    public Atiku saveComment(CommentRequest commentRequest) {
+        Comment comment = new Comment();
+        var article = atikuRepository.getAtikuByTitleIgnoreCase(commentRequest.getArticleTitle());
+        if (article != null) {
+            comment.setComment(commentRequest.getCommentMessage());
+            comment.setTime(commentRequest.getTime());
+            comment.setArticleTitle(commentRequest.getArticleTitle());
+            var savedComment =commentService.saveComment(comment);
+            article.getComments().add(savedComment);
+        }
+        return article;
     }
 }

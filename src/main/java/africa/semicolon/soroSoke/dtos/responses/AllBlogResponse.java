@@ -1,2 +1,4 @@
-package africa.semicolon.soroSoke.dtos.responses;public class AllBlogResponse {
+package africa.semicolon.soroSoke.dtos.responses;
+
+public class AllBlogResponse {
 }

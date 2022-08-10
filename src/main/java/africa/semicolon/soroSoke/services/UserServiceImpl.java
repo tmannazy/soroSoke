@@ -1,22 +1,18 @@
 package africa.semicolon.soroSoke.services;
 
-import africa.semicolon.soroSoke.data.models.Atiku;
 import africa.semicolon.soroSoke.data.models.Blog;
 import africa.semicolon.soroSoke.data.models.User;
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
-import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
-import africa.semicolon.soroSoke.dtos.requests.AtikuRequest;
-import africa.semicolon.soroSoke.dtos.requests.LoginRequest;
-import africa.semicolon.soroSoke.dtos.requests.RegisterRequest;
-import africa.semicolon.soroSoke.dtos.responses.BlogResponse;
-import africa.semicolon.soroSoke.dtos.responses.LoginResponse;
-import africa.semicolon.soroSoke.dtos.responses.RegisterUserResponse;
+import africa.semicolon.soroSoke.dtos.requests.*;
+import africa.semicolon.soroSoke.dtos.responses.*;
+import africa.semicolon.soroSoke.exceptions.ArticleRequestException;
 import africa.semicolon.soroSoke.exceptions.BlogExistsException;
 import africa.semicolon.soroSoke.exceptions.InvalidUserNameOrPasswordException;
 import africa.semicolon.soroSoke.exceptions.UserExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -94,24 +90,46 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Blog addArticle(AtikuRequest request) {
-        Atiku newAtiku = new Atiku();
-        var foundBlog = blogService.getBlog();
-        newAtiku.setTitle(request.getTitle());
-        newAtiku.setTime(request.getTime());
-        atikuService.saveArticle(newAtiku);
-        foundBlog.getArticles().add(newAtiku);
-        return foundBlog;
+    public AtikuResponse addArticle(AtikuRequest request) throws ArticleRequestException {
+        AtikuResponse atikuResponse = new AtikuResponse();
+        var validateUser = userRepository.findUserByUserNameIgnoreCase(request.getUserName());
+        if (validateUser != null) {
+            var checkBlog = validateUser.getBlog().getBlogTitle();
+            if(checkBlog != null) {
+                addArticleToUser(request, atikuResponse, validateUser);
+            }
+        } else{
+            throw new ArticleRequestException(request.getUserName() + " is yet to create a Blog.");
+        }
+        return atikuResponse;
+    }
+
+    private void addArticleToUser(AtikuRequest request, AtikuResponse atikuResponse, User validateUser) {
+        var userBlog = validateUser.getBlog();
+        var savedArticle = blogService.addArticle(request);
+        userBlog.getArticles().add(savedArticle);
+        blogService.saveBlog(userBlog);
+        userRepository.save(validateUser);
+        atikuResponse.setMessage("Article added to " + request.getUserName() + "'s Blog.");
     }
 
     @Override
-    public Blog getBlog() {
-        return blogService.getBlog();
+    public List<AllBlogResponse> getBlog() {
+//       var allBlog = blogService.getBlog();
+        return null;
     }
 
     @Override
     public void deleteArticle(String articleToDelete) {
         atikuService.deleteArticle(articleToDelete);
+    }
+
+    @Override
+    public Blog addComment(CommentRequest commentRequest) {
+        var savedArticle = atikuService.saveComment(commentRequest);
+        var foundBlog = blogService.getBlog().get(0);
+        foundBlog.getArticles().add(savedArticle);
+        return foundBlog;
     }
 
 }
