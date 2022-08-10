@@ -47,8 +47,8 @@ public class AtikuServiceImpl implements AtikuService {
         Atiku deletedArticle = null;
         for (var article : getAllArticles()) {
             if (Objects.equals(article.getId(), articleToDelete)) {
-                atikuRepository.delete(article);
                 deletedArticle = article;
+                atikuRepository.delete(article);
                 break;
             }
         }
@@ -58,11 +58,15 @@ public class AtikuServiceImpl implements AtikuService {
     @Override
     public Comment saveComment(CommentRequest commentRequest) {
         Comment comment = new Comment();
-        var articleFound = atikuRepository.findById(commentRequest.getArticleId());
-        if (articleFound.isPresent()) {
-            comment.setComment(commentRequest.getCommentMessage());
-            comment.setTime(commentRequest.getTime());
-            commentService.saveComment(comment);
+        var articlesFound = atikuRepository.findAll();
+        for (var article : articlesFound) {
+            if (Objects.equals(article.getId(), commentRequest.getArticleId())) {
+                comment.setComment(commentRequest.getCommentMessage());
+                comment.setTime(commentRequest.getTime());
+                var savedComment = commentService.saveComment(comment);
+                article.getComments().add(savedComment);
+                break;
+            }
         }
         return comment;
     }

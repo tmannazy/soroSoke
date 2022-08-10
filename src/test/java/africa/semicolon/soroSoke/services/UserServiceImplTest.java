@@ -1,5 +1,6 @@
 package africa.semicolon.soroSoke.services;
 
+import africa.semicolon.soroSoke.data.repositories.AtikuRepository;
 import africa.semicolon.soroSoke.data.repositories.BlogRepository;
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
 import africa.semicolon.soroSoke.dtos.requests.*;
@@ -28,6 +29,9 @@ class UserServiceImplTest {
     private BlogRepository blogRepository;
 
     @Autowired
+    private AtikuRepository atikuRepository;
+
+    @Autowired
     private AtikuService atikuService;
     @Autowired
     private BlogService blogService;
@@ -36,6 +40,7 @@ class UserServiceImplTest {
     void tearDown() {
         userRepository.deleteAll();
         blogRepository.deleteAll();
+        atikuRepository.deleteAll();
     }
 
     @BeforeEach
@@ -165,7 +170,7 @@ class UserServiceImplTest {
 
         DeleteArticleRequest delArticle = new DeleteArticleRequest();
         delArticle.setUserName("BoyO");
-        delArticle.setArticleId("Welcome to Programming 101");
+        delArticle.setArticleId(userService.getBlog("Boyo").getArticles().get(1).getId());
         userService.deleteArticle(delArticle);
 
         assertEquals(1, userService.getNumberOfArticles());
@@ -202,25 +207,24 @@ class UserServiceImplTest {
         blogRequest2.setBlogTitle("All About Programming");
         blogRequest2.setUserName("boyo");
         userService.createNewBlog(blogRequest2);
-        assertEquals(1, userService.getNumberOfUserBlogs());
+        assertEquals(2, userService.getNumberOfUserBlogs());
 
         AtikuRequest newRequest3 = new AtikuRequest();
         newRequest3.setTitle("How to Think Like A Programmer");
         newRequest3.setBody("The power of the mind is the ability to stretch the thinking muscle.");
         newRequest3.setUserName("Boyo");
         userService.addArticle(newRequest3);
-        assertEquals(2, userService.getNumberOfArticles());
-
+        assertEquals(3, userService.getNumberOfArticles());
+        System.out.println(userService.getBlog("Boyo"));
 
         CommentRequest commentRequest = new CommentRequest();
         commentRequest.setCommentMessage("First step to be a programmer is to change your thinking pattern.");
-        commentRequest.setArticleId("How to Think Like A Programmer");
-        commentRequest.setUserName("Plato");
+        commentRequest.setArticleId(atikuService.getAllArticles().get(2).getId());
+        commentRequest.setUserName("Boyo");
         userService.addComment(commentRequest);
-        assertEquals(1, userService.getNumberOfUserBlogs());
-
-        System.out.println();
-//        assertEquals(" ", userService.getBlog().get(0).getArticles());
+        assertEquals(2, userService.getNumberOfUserBlogs());
+        System.out.println("\n\n\n" + userService.getBlog("Boyo").getArticles().get(0));
+        System.out.println(userRepository.findUserByUserNameIgnoreCase("Boyo").getBlog());
 
     }
 }

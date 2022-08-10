@@ -1,19 +1,12 @@
 package africa.semicolon.soroSoke.controllers;
 
-import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
-import africa.semicolon.soroSoke.dtos.requests.LoginRequest;
-import africa.semicolon.soroSoke.dtos.requests.RegisterRequest;
-import africa.semicolon.soroSoke.exceptions.BlogExistsException;
-import africa.semicolon.soroSoke.exceptions.InvalidUserNameOrPasswordException;
-import africa.semicolon.soroSoke.exceptions.UserExistsException;
+import africa.semicolon.soroSoke.dtos.requests.*;
+import africa.semicolon.soroSoke.exceptions.*;
 import africa.semicolon.soroSoke.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -30,7 +23,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/login")
+    @PostMapping("/user/login")
     public ResponseEntity<?> accountLogin(@RequestBody LoginRequest loginRequest) {
         try {
             var loginResponse = userService.userLogin(loginRequest);
@@ -40,7 +33,7 @@ public class UserController {
         }
     }
 
-    @PatchMapping("/new-blog")
+    @PatchMapping("/user/new-blog")
     public ResponseEntity<?> createBlog(@RequestBody AddBlogRequest createBlog) {
         try {
             var blogResponse = userService.createNewBlog(createBlog);

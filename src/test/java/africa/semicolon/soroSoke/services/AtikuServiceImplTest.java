@@ -56,13 +56,12 @@ class AtikuServiceImplTest {
 
         CommentRequest commentRequest = new CommentRequest();
         Comment newComment = new Comment();
-        commentRequest.setArticleTitle("GriT");
+        commentRequest.setArticleId("GriT");
         commentRequest.setCommentMessage("It takes only GRIT to get over life challenges.");
-        newComment.setArticleTitle(commentRequest.getArticleTitle());
         newComment.setComment(commentRequest.getCommentMessage());
         newComment.setTime(commentRequest.getTime());
         atikuService.saveComment(commentRequest);
-        var atikuFound = atikuService.getArticleByTitle(commentRequest.getArticleTitle());
+        var atikuFound = atikuService.getArticleByTitle(commentRequest.getArticleId());
 
         var savedComment = commentService.saveComment(newComment);
         atikuFound.getComments().add(savedComment);
@@ -83,24 +82,22 @@ class AtikuServiceImplTest {
 
         CommentRequest commentRequest = new CommentRequest();
         Comment newComment = new Comment();
-        commentRequest.setArticleTitle("GriT");
+        commentRequest.setArticleId("GriT");
         commentRequest.setCommentMessage("It takes only GRIT to get over life challenges.");
-        newComment.setArticleTitle(commentRequest.getArticleTitle());
         newComment.setComment(commentRequest.getCommentMessage());
         newComment.setTime(commentRequest.getTime());
-        var atikuFound = atikuService.getArticleByTitle(commentRequest.getArticleTitle());
+        var atikuFound = atikuService.getArticleByTitle(commentRequest.getArticleId());
         var savedComment = commentService.saveComment(newComment);
         atikuFound.getComments().add(savedComment);
         atikuService.saveArticle(atikuFound);
 
         CommentRequest commentRequest2 = new CommentRequest();
         Comment newComment2 = new Comment();
-        commentRequest2.setArticleTitle("Grit");
+        commentRequest2.setArticleId("Grit");
         commentRequest2.setCommentMessage("God over everything.");
-        newComment2.setArticleTitle(commentRequest2.getArticleTitle());
         newComment2.setComment(commentRequest2.getCommentMessage());
         newComment2.setTime(commentRequest2.getTime());
-        var atikuFound2 = atikuService.getArticleByTitle(commentRequest2.getArticleTitle());
+        var atikuFound2 = atikuService.getArticleByTitle(commentRequest2.getArticleId());
         var savedComment2 = commentService.saveComment(newComment2);
         atikuFound2.getComments().add(savedComment2);
         atikuService.saveArticle(atikuFound2);

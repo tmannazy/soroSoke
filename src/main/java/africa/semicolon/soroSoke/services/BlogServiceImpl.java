@@ -22,14 +22,9 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public Blog saveBlog(AddBlogRequest blogName) throws BlogExistsException {
         Blog newBlog = new Blog();
-        if (blogRepository.count() < 1) {
-            newBlog.setBlogTitle(blogName.getBlogTitle());
-            blogRepository.save(newBlog);
-            return newBlog;
-        }
-        else {
-            throw new BlogExistsException("User " + blogName.getUserName().toUpperCase() + " already has a blog.");
-        }
+        newBlog.setBlogTitle(blogName.getBlogTitle());
+        blogRepository.save(newBlog);
+        return newBlog;
     }
 
     @Override

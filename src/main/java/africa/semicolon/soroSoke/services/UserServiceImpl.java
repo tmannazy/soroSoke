@@ -131,6 +131,8 @@ public class UserServiceImpl implements UserService {
         if (userFound != null) {
             var deletedArticle = atikuService.deleteArticle(articleToDelete.getArticleId());
             if (deletedArticle != null) {
+                userFound.getBlog().getArticles().remove(deletedArticle);
+                userRepository.save(userFound);
                 response.setMessage("Article " + deletedArticle.getTitle() + " removed successfully");
             } else {
                 throw new ArticleRequestException("The selected article don't exist.");
@@ -155,10 +157,12 @@ public class UserServiceImpl implements UserService {
             if (Objects.equals(article.getId(), commentRequest.getArticleId())) {
                 var savedComment = atikuService.saveComment(commentRequest);
                 article.getComments().add(savedComment);
-            } else{
-                throw new CommentRequestException("The selected article is not in blog.");
+                break;
             }
         }
+//        else{
+//            throw new CommentRequestException("The selected article is not in blog.");
+//        }
         blogService.saveBlog(userBlog);
         userRepository.save(user);
         response.setMessage("Comment successfully added to article.");
