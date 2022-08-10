@@ -87,7 +87,7 @@ class UserServiceImplTest {
         blogRequest.setBlogTitle("Programming is Hard");
         blogRequest.setUserName("BoYo");
         userService.createNewBlog(blogRequest);
-        assertEquals(1, blogService.getNumberOfUserBlogs());
+        assertEquals(1, userService.getNumberOfUserBlogs());
     }
 
     @Test
@@ -96,7 +96,7 @@ class UserServiceImplTest {
         blogRequest.setBlogTitle("Programming is Hard");
         blogRequest.setUserName("boyo");
         userService.createNewBlog(blogRequest);
-        assertEquals(1, blogService.getNumberOfUserBlogs());
+        assertEquals(1, userService.getNumberOfUserBlogs());
 
         AddBlogRequest blogRequest2 = new AddBlogRequest();
         blogRequest2.setBlogTitle("How to make $1 billion");
@@ -106,7 +106,7 @@ class UserServiceImplTest {
         NullPointerException blog = assertThrows(NullPointerException.class,
                 () -> userService.createNewBlog(blogRequest2));
         assertEquals("User BOYO has a blog.", blog.getMessage());
-        assertEquals(1, blogService.getNumberOfUserBlogs());
+        assertEquals(1, userService.getNumberOfUserBlogs());
     }
 
     @Test
@@ -115,13 +115,13 @@ class UserServiceImplTest {
         blogRequest.setBlogTitle("Programming Is HARD");
         blogRequest.setUserName("boyo");
         userService.createNewBlog(blogRequest);
-        assertEquals(1L, blogService.getNumberOfUserBlogs());
+        assertEquals(1L, userService.getNumberOfUserBlogs());
 
         AddBlogRequest blogRequest2 = new AddBlogRequest();
         blogRequest2.setEditTitle("Programming takes consistency, time & patience");
         blogRequest2.setUserName("boyo");
         var savedBlog = userService.createNewBlog(blogRequest2);
-        assertEquals(1L, blogService.getNumberOfUserBlogs());
+        assertEquals(1L, userService.getNumberOfUserBlogs());
         assertEquals("Programming Is HARD blog title successfully updated with " +
                      "Programming takes consistency, time & patience", savedBlog.getMessage());
     }
@@ -141,9 +141,7 @@ class UserServiceImplTest {
         userService.addArticle(newRequest);
         assertEquals("Welcome to Programming 101", userRepository.findUserByUserNameIgnoreCase("Boyo").
                 getBlog().getArticles().get(0).getTitle());
-        assertEquals(1L, blogService.getNumberOfUserBlogs());
-
-
+        assertEquals(1L, userService.getNumberOfUserBlogs());
     }
 
     @Test
@@ -152,22 +150,28 @@ class UserServiceImplTest {
         blogRequest.setBlogTitle("All About Programming");
         blogRequest.setUserName("boyo");
         userService.createNewBlog(blogRequest);
-//        userService.getAllUsers()
-        assertEquals(1, blogService.getNumberOfUserBlogs());
+        assertEquals(1, userService.getNumberOfUserBlogs());
 
         AtikuRequest newRequest = new AtikuRequest();
-        newRequest.setTitle("Welcome to Programming 101");
-//        newRequest.set
+        newRequest.setTitle("How to Think Like A Programmer");
+        newRequest.setBody("The power of the mind is the ability to stretch the thinking muscle.");
+        newRequest.setUserName("Boyo");
         userService.addArticle(newRequest);
-        AtikuRequest newRequest2 = new AtikuRequest();
-        newRequest2.setTitle("How to Think Like A Programmer");
-        var blog = userService.addArticle(newRequest2);
-        assertEquals(2, atikuService.getNumberOfArticles());
 
-//        System.out.println(userService.getBlog().get(0).getArticles());
-        userService.deleteArticle("welcome to Programming 101");
-//        assertEquals("How to Think Like A Programmer", blog.getArticles().get(0).getTitle());
-        assertEquals(1, atikuService.getNumberOfArticles());
+        AtikuRequest newRequest2 = new AtikuRequest();
+        newRequest2.setTitle("Welcome to Programming 101");
+        newRequest2.setBody("Here we are going to go on a journey to introduce you to the world of programming.");
+        newRequest2.setUserName("Boyo");
+        userService.addArticle(newRequest2);
+        assertEquals(2, userService.getNumberOfArticles());
+
+        DeleteArticleRequest delArticle = new DeleteArticleRequest();
+        delArticle.setUserName("BoyO");
+        delArticle.setArticleId("Welcome to Programming 101");
+        userService.deleteArticle(delArticle);
+
+        assertEquals(1, userService.getNumberOfArticles());
+        assertEquals(1,userService.getBlog("BOYO").getArticles().size());
     }
 
     @Test
@@ -176,7 +180,7 @@ class UserServiceImplTest {
         blogRequest.setBlogTitle("All About Programming");
         blogRequest.setUserName("boyo");
         userService.createNewBlog(blogRequest);
-        assertEquals(1, blogService.getNumberOfUserBlogs());
+        assertEquals(1, userService.getNumberOfUserBlogs());
 
         AtikuRequest newRequest = new AtikuRequest();
         newRequest.setTitle("Welcome to Programming 101");
@@ -185,13 +189,13 @@ class UserServiceImplTest {
         AtikuRequest newRequest2 = new AtikuRequest();
         newRequest2.setTitle("How to Think Like A Programmer");
         userService.addArticle(newRequest2);
-        assertEquals(2, atikuService.getNumberOfArticles());
+        assertEquals(2, userService.getNumberOfArticles());
 
         CommentRequest commentRequest = new CommentRequest();
         commentRequest.setCommentMessage("First step to be a programmer is to change your thinking pattern.");
         commentRequest.setArticleTitle("How to Think Like A Programmer");
         var blog = userService.addComment(commentRequest);
-        assertEquals(1, blogService.getNumberOfUserBlogs());
+        assertEquals(1, userService.getNumberOfUserBlogs());
 
         System.out.println(blog.getArticles().get(0));
 //        assertEquals(" ", userService.getBlog().get(0).getArticles());

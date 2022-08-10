@@ -9,8 +9,6 @@ import africa.semicolon.soroSoke.exceptions.InvalidUserNameOrPasswordException;
 import africa.semicolon.soroSoke.exceptions.UserExistsException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public interface UserService {
     RegisterUserResponse registerUser(RegisterRequest registerRequest) throws UserExistsException;
@@ -21,9 +19,13 @@ public interface UserService {
 
     AtikuResponse addArticle(AtikuRequest request) throws ArticleRequestException;
 
-    List<AllBlogResponse> getBlog();
+    UserBlogResponse getBlog(String userName);
 
-    void deleteArticle(String articleToDelete);
+    DeleteArticleResponse deleteArticle(DeleteArticleRequest articleToDelete) throws ArticleRequestException;
 
     Blog addComment(CommentRequest commentRequest);
+
+    int getNumberOfArticles();
+
+    int getNumberOfUserBlogs();
 }

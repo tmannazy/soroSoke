@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AtikuServiceImpl implements AtikuService {
@@ -43,13 +44,16 @@ public class AtikuServiceImpl implements AtikuService {
     }
 
     @Override
-    public void deleteArticle(String articleToDelete) {
+    public Atiku deleteArticle(String articleToDelete) {
+        Atiku deletedArticle = null;
         for (var article : getAllArticles()) {
-            if (article.getTitle().equalsIgnoreCase(articleToDelete)) {
+            if (Objects.equals(article.getId(), articleToDelete)) {
                 atikuRepository.delete(article);
+                deletedArticle = article;
                 break;
             }
         }
+        return deletedArticle;
     }
 
     @Override

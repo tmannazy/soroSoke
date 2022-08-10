@@ -24,4 +24,5 @@ public interface BlogService {
     List<Blog> getBlog();
 
     Atiku addArticle(AtikuRequest newRequest);
+
 }

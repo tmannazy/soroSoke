@@ -16,7 +16,7 @@ public interface AtikuService {
 
     void deleteComment(String commentToDel);
 
-    void deleteArticle(String articleToDelete);
+    Atiku deleteArticle(String articleToDelete);
 
     Atiku saveComment(CommentRequest commentRequest);
 }

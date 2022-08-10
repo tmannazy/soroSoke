@@ -12,7 +12,6 @@ import africa.semicolon.soroSoke.exceptions.UserExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -98,8 +97,11 @@ public class UserServiceImpl implements UserService {
             if(checkBlog != null) {
                 addArticleToUser(request, atikuResponse, validateUser);
             }
+         else {
+                throw new ArticleRequestException(request.getUserName() + " is yet to create a Blog.");
+            }
         } else{
-            throw new ArticleRequestException(request.getUserName() + " is yet to create a Blog.");
+            atikuResponse.setMessage("User details " + request.getUserName() + " entered does not exist.");
         }
         return atikuResponse;
     }
@@ -114,14 +116,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<AllBlogResponse> getBlog() {
-//       var allBlog = blogService.getBlog();
-        return null;
+    public UserBlogResponse getBlog(String userName) {
+        var userFound = userRepository.findUserByUserNameIgnoreCase(userName);
+        UserBlogResponse response = new UserBlogResponse();
+        if (userFound != null){
+            response.setBlogTitle(userFound.getBlog().getBlogTitle());
+            response.setId(userFound.getBlog().getId());
+            response.setArticles(userFound.getBlog().getArticles());
+        }
+        return response;
     }
 
     @Override
-    public void deleteArticle(String articleToDelete) {
-        atikuService.deleteArticle(articleToDelete);
+    public DeleteArticleResponse deleteArticle(DeleteArticleRequest articleToDelete) throws ArticleRequestException {
+        var userFound = userRepository.findUserByUserNameIgnoreCase(articleToDelete.getUserName());
+        DeleteArticleResponse response = new DeleteArticleResponse();
+        if (userFound != null) {
+            var deletedArticle = atikuService.deleteArticle(articleToDelete.getArticleId());
+            if (deletedArticle != null) {
+                response.setMessage("Article " + deletedArticle.getTitle() + " removed successfully");
+            } else {
+                throw new ArticleRequestException("The selected article don't exist.");
+            }
+        }
+        return response;
     }
 
     @Override
@@ -130,6 +148,16 @@ public class UserServiceImpl implements UserService {
         var foundBlog = blogService.getBlog().get(0);
         foundBlog.getArticles().add(savedArticle);
         return foundBlog;
+    }
+
+    @Override
+    public int getNumberOfArticles() {
+        return atikuService.getNumberOfArticles();
+    }
+
+    @Override
+    public int getNumberOfUserBlogs() {
+        return blogService.getNumberOfUserBlogs();
     }
 
 }
