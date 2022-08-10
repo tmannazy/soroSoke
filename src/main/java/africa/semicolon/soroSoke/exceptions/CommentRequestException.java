@@ -1,6 +1,7 @@
 package africa.semicolon.soroSoke.exceptions;
 
-public class CommentRequestException extends Throwable {
-    public CommentRequestException(String s) {
+public class CommentRequestException extends RuntimeException {
+    public CommentRequestException(String message) {
+        super(message);
     }
 }

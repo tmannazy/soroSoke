@@ -12,7 +12,6 @@ import java.util.Objects;
 
 @Service
 public class AtikuServiceImpl implements AtikuService {
-
     @Autowired
     CommentService commentService;
     @Autowired
@@ -57,16 +56,14 @@ public class AtikuServiceImpl implements AtikuService {
     }
 
     @Override
-    public Atiku saveComment(CommentRequest commentRequest) {
+    public Comment saveComment(CommentRequest commentRequest) {
         Comment comment = new Comment();
-        var article = atikuRepository.getAtikuByTitleIgnoreCase(commentRequest.getArticleTitle());
-        if (article != null) {
+        var articleFound = atikuRepository.findById(commentRequest.getArticleId());
+        if (articleFound.isPresent()) {
             comment.setComment(commentRequest.getCommentMessage());
             comment.setTime(commentRequest.getTime());
-            comment.setArticleTitle(commentRequest.getArticleTitle());
-            var savedComment =commentService.saveComment(comment);
-            article.getComments().add(savedComment);
+            commentService.saveComment(comment);
         }
-        return article;
+        return comment;
     }
 }

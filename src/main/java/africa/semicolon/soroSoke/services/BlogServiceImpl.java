@@ -39,8 +39,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Blog getBlogByTitle(String title) {
-        var foundBlog = blogRepository.getBlogByBlogTitleIgnoreCase(title);
-        return foundBlog;
+        return blogRepository.getBlogByBlogTitleIgnoreCase(title);
     }
 
     @Override

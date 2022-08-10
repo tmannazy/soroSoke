@@ -1,6 +1,7 @@
 package africa.semicolon.soroSoke.services;
 
 import africa.semicolon.soroSoke.data.models.Atiku;
+import africa.semicolon.soroSoke.data.models.Comment;
 import africa.semicolon.soroSoke.dtos.requests.CommentRequest;
 
 import java.util.List;
@@ -18,5 +19,5 @@ public interface AtikuService {
 
     Atiku deleteArticle(String articleToDelete);
 
-    Atiku saveComment(CommentRequest commentRequest);
+    Comment saveComment(CommentRequest commentRequest);
 }

@@ -23,7 +23,7 @@ public interface UserService {
 
     DeleteArticleResponse deleteArticle(DeleteArticleRequest articleToDelete) throws ArticleRequestException;
 
-    Blog addComment(CommentRequest commentRequest);
+    CommentResponse addComment(CommentRequest commentRequest);
 
     int getNumberOfArticles();
 

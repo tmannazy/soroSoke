@@ -5,10 +5,7 @@ import africa.semicolon.soroSoke.data.models.User;
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
 import africa.semicolon.soroSoke.dtos.requests.*;
 import africa.semicolon.soroSoke.dtos.responses.*;
-import africa.semicolon.soroSoke.exceptions.ArticleRequestException;
-import africa.semicolon.soroSoke.exceptions.BlogExistsException;
-import africa.semicolon.soroSoke.exceptions.InvalidUserNameOrPasswordException;
-import africa.semicolon.soroSoke.exceptions.UserExistsException;
+import africa.semicolon.soroSoke.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +13,7 @@ import java.util.Objects;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final RegisterUserResponse response = new RegisterUserResponse();
+    private RegisterUserResponse response = new RegisterUserResponse();
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -143,11 +140,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Blog addComment(CommentRequest commentRequest) {
-        var savedArticle = atikuService.saveComment(commentRequest);
-        var foundBlog = blogService.getBlog().get(0);
-        foundBlog.getArticles().add(savedArticle);
-        return foundBlog;
+    public CommentResponse addComment(CommentRequest commentRequest) {
+        var user = userRepository.findUserByUserNameIgnoreCase(commentRequest.getUserName());
+        CommentResponse response = new CommentResponse();
+        if (user != null) {
+            addCommentToArticle(commentRequest, user, response);
+        }
+        return response;
+    }
+
+    private void addCommentToArticle(CommentRequest commentRequest, User user, CommentResponse response) {
+        var userBlog = user.getBlog();
+        for(var article: userBlog.getArticles()){
+            if (Objects.equals(article.getId(), commentRequest.getArticleId())) {
+                var savedComment = atikuService.saveComment(commentRequest);
+                article.getComments().add(savedComment);
+            } else{
+                throw new CommentRequestException("The selected article is not in blog.");
+            }
+        }
+        blogService.saveBlog(userBlog);
+        userRepository.save(user);
+        response.setMessage("Comment successfully added to article.");
     }
 
     @Override
