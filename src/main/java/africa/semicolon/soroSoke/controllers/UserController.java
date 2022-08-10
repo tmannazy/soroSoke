@@ -43,6 +43,44 @@ public class UserController {
         }
     }
 
+    @PostMapping("/user/article")
+    public ResponseEntity<?> createArticle(@RequestBody AtikuRequest request) {
+        try {
+            var articleResponse = userService.addArticle(request);
+            return new ResponseEntity<>(articleResponse, HttpStatus.CREATED);
+        } catch (ArticleRequestException err) {
+            return new ResponseEntity<>(err.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    @GetMapping("user/{email}")
+    public ResponseEntity<?> viewBlog(@PathVariable String email) {
+        try {
+            var viewBlog = userService.getBlog(email);
+            return new ResponseEntity<>(viewBlog, HttpStatus.ACCEPTED);
+        } catch (BlogExistsException err) {
+            return new ResponseEntity<>(err.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping("user/comment")
+    public ResponseEntity<?> comment(@RequestBody CommentRequest commentRequest) {
+        try {
+            var comment = userService.addComment(commentRequest);
+            return new ResponseEntity<>(comment, HttpStatus.CREATED);
+        } catch (CommentRequestException err) {
+            return new ResponseEntity<>(err.getMessage(), HttpStatus.BAD_GATEWAY);
+        }
+    }
+
+    @DeleteMapping("/user/delete")
+    public ResponseEntity<?> delete(@RequestBody DeleteArticleRequest deleteArticleRequest) {
+        try {
+            var delete = userService.deleteArticle(deleteArticleRequest);
+            return new ResponseEntity<>(delete, HttpStatus.ACCEPTED);
+        } catch (ArticleRequestException err) {
+            return new ResponseEntity<>(err.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
 }
