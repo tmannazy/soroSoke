@@ -6,4 +6,5 @@ import lombok.Data;
 public class DeleteArticleRequest {
     private String userName;
     private String articleId;
+    private String password;
 }

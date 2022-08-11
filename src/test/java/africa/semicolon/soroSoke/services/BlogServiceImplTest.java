@@ -1,6 +1,7 @@
 package africa.semicolon.soroSoke.services;
 
 import africa.semicolon.soroSoke.data.repositories.BlogRepository;
+import africa.semicolon.soroSoke.data.repositories.UserRepository;
 import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
 import africa.semicolon.soroSoke.dtos.requests.AtikuRequest;
 import africa.semicolon.soroSoke.exceptions.BlogExistsException;
@@ -20,9 +21,13 @@ class BlogServiceImplTest {
     @Autowired
     private BlogRepository blogRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @AfterEach
     void tearDown() {
         blogRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -30,26 +35,11 @@ class BlogServiceImplTest {
         AddBlogRequest blogRequest = new AddBlogRequest();
         blogRequest.setBlogTitle("Programming Is HARD");
         blogRequest.setUserName("Tman");
+        blogRequest.setPassword("taLLest@2023");
         blogService.saveBlog(blogRequest);
         assertEquals(1L, blogRepository.count());
     }
 
-    @Test
-    void testToCreateMultipleBlogThrowsException() {
-        AddBlogRequest blogRequest = new AddBlogRequest();
-        blogRequest.setBlogTitle("Programming Is HARD");
-        blogRequest.setUserName("Tman");
-        blogService.saveBlog(blogRequest);
-        assertEquals(1L, blogRepository.count());
-
-        AddBlogRequest blogRequest2 = new AddBlogRequest();
-        blogRequest2.setBlogTitle("Programming Is Hard");
-        blogRequest2.setUserName("Tman");
-        BlogExistsException blogExist = assertThrows(BlogExistsException.class,
-                () -> blogService.saveBlog(blogRequest2));
-        assertEquals("User TMAN already has a blog.", blogExist.getMessage());
-        assertEquals(1L, blogRepository.count());
-    }
 
     @Test
     void testToCreateArticle() {

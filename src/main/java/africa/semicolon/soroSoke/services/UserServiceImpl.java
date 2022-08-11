@@ -39,14 +39,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BlogResponse createNewBlog(AddBlogRequest createBlog) throws BlogExistsException, NullPointerException {
+    public BlogResponse createNewBlog(AddBlogRequest createBlog) throws BlogExistsException {
         var validateUser = userRepository.findUserByUserNameIgnoreCase(createBlog.getUserName());
         BlogResponse blogResponse = new BlogResponse();
         if (validateUser == null) {
             throw new BlogExistsException(createBlog.getUserName() + " does not exist! Create an account.");
         }
 
-        if (validateUser.getBlog() == null) {
+        var userPass = Objects.equals(validateUser.getPassword(), createBlog.getPassword());
+        if (validateUser.getBlog() == null && userPass) {
             var newBlog = blogService.saveBlog(createBlog);
             newBlog.setBlogTitle(createBlog.getBlogTitle());
             validateUser.setBlog(newBlog);
@@ -55,21 +56,23 @@ public class UserServiceImpl implements UserService {
             return blogResponse;
         }
 
-        if (validateUser.getBlog() != null && createBlog.getEditTitle() == null) {
-            throw new NullPointerException("User " + createBlog.getUserName().toUpperCase() + " has a blog.");
+        if (validateUser.getBlog() != null) {
+            if (validateUser.getBlog().getBlogTitle().equalsIgnoreCase(createBlog.getBlogTitle())) {
+                throw new BlogExistsException("User " + createBlog.getUserName().toUpperCase() + " has a blog.");
+            }
         }
 
-        if (!validateUser.getBlog().getBlogTitle().isEmpty()) {
+        if (!validateUser.getBlog().getBlogTitle().isEmpty() && userPass) {
             var newBlog = blogService.getBlogByTitle(validateUser.getBlog().getBlogTitle());
             blogResponse.setMessage(validateUser.getBlog().getBlogTitle() +
-                                    " blog title successfully updated with " + createBlog.getEditTitle());
+                                    " blog title successfully updated with " + createBlog.getBlogTitle());
             validateUser.setBlog(newBlog);
-            blogService.deleteBlog(newBlog);
-            blogService.saveBlog(createBlog);
+            blogService.saveBlog(newBlog);
             userRepository.save(validateUser);
             return blogResponse;
         }
-        return null;
+        blogResponse.setMessage("User not found");
+        return blogResponse;
     }
 
     @Override

@@ -20,11 +20,17 @@ public class BlogServiceImpl implements BlogService {
     private AtikuService atikuService;
 
     @Override
-    public Blog saveBlog(AddBlogRequest blogName) throws BlogExistsException {
+    public Blog saveBlog(AddBlogRequest blogName) {
         Blog newBlog = new Blog();
-        newBlog.setBlogTitle(blogName.getBlogTitle());
-        blogRepository.save(newBlog);
-        return newBlog;
+        var searchBlog = blogRepository.getBlogByBlogTitleIgnoreCase(blogName.getBlogTitle());
+        if(searchBlog == null) {
+            newBlog.setBlogTitle(blogName.getBlogTitle());
+            blogRepository.save(newBlog);
+            return newBlog;
+        } else{
+            searchBlog.setBlogTitle(blogName.getBlogTitle());
+            return searchBlog;
+        }
     }
 
     @Override

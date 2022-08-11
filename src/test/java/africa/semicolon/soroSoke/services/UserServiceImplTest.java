@@ -91,6 +91,7 @@ class UserServiceImplTest {
         AddBlogRequest blogRequest = new AddBlogRequest();
         blogRequest.setBlogTitle("Programming is Hard");
         blogRequest.setUserName("BoYo");
+        blogRequest.setPassword("amanpia2023");
         userService.createNewBlog(blogRequest);
         assertEquals(1, userService.getNumberOfUserBlogs());
     }
@@ -100,13 +101,15 @@ class UserServiceImplTest {
         AddBlogRequest blogRequest = new AddBlogRequest();
         blogRequest.setBlogTitle("Programming is Hard");
         blogRequest.setUserName("boyo");
+        blogRequest.setPassword("amanpia2023");
         userService.createNewBlog(blogRequest);
         assertEquals(1, userService.getNumberOfUserBlogs());
 
         AddBlogRequest blogRequest2 = new AddBlogRequest();
-        blogRequest2.setBlogTitle("How to make $1 billion");
+        blogRequest2.setBlogTitle("Programming is HARd");
         blogRequest2.setUserName("boyo");
-        NullPointerException blog = assertThrows(NullPointerException.class,
+        blogRequest.setPassword("amanpia2023");
+        BlogExistsException blog = assertThrows(BlogExistsException.class,
                 () -> userService.createNewBlog(blogRequest2));
         assertEquals("User BOYO has a blog.", blog.getMessage());
         assertEquals(1, userService.getNumberOfUserBlogs());
@@ -117,12 +120,14 @@ class UserServiceImplTest {
         AddBlogRequest blogRequest = new AddBlogRequest();
         blogRequest.setBlogTitle("Programming Is HARD");
         blogRequest.setUserName("boyo");
+        blogRequest.setPassword("amanpia2023");
         userService.createNewBlog(blogRequest);
         assertEquals(1L, userService.getNumberOfUserBlogs());
 
         AddBlogRequest blogRequest2 = new AddBlogRequest();
-        blogRequest2.setEditTitle("Programming takes consistency, time & patience");
+        blogRequest2.setBlogTitle("Programming takes consistency, time & patience");
         blogRequest2.setUserName("boyo");
+        blogRequest2.setPassword("amanpia2023");
         var savedBlog = userService.createNewBlog(blogRequest2);
         assertEquals(1L, userService.getNumberOfUserBlogs());
         assertEquals("Programming Is HARD blog title successfully updated with " +
@@ -134,6 +139,7 @@ class UserServiceImplTest {
         AddBlogRequest blogRequest = new AddBlogRequest();
         blogRequest.setBlogTitle("All About Programming");
         blogRequest.setUserName("boyo");
+        blogRequest.setPassword("amanpia2023");
         userService.createNewBlog(blogRequest);
         assertEquals(1, blogService.getNumberOfUserBlogs());
 
@@ -152,6 +158,7 @@ class UserServiceImplTest {
         AddBlogRequest blogRequest = new AddBlogRequest();
         blogRequest.setBlogTitle("All About Programming");
         blogRequest.setUserName("boyo");
+        blogRequest.setPassword("amanpia2023");
         userService.createNewBlog(blogRequest);
         assertEquals(1, userService.getNumberOfUserBlogs());
 
@@ -187,6 +194,7 @@ class UserServiceImplTest {
         AddBlogRequest blogRequest = new AddBlogRequest();
         blogRequest.setBlogTitle("Like, Love or Lust - The 3ple Ls of Life");
         blogRequest.setUserName("plaTo");
+        blogRequest.setPassword("@Platonic");
         userService.createNewBlog(blogRequest);
         assertEquals(1, userService.getNumberOfUserBlogs());
 
@@ -206,6 +214,7 @@ class UserServiceImplTest {
         AddBlogRequest blogRequest2 = new AddBlogRequest();
         blogRequest2.setBlogTitle("All About Programming");
         blogRequest2.setUserName("boyo");
+        blogRequest2.setPassword("amanpia2023");
         userService.createNewBlog(blogRequest2);
         assertEquals(2, userService.getNumberOfUserBlogs());
 

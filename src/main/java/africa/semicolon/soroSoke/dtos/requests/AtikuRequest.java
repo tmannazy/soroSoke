@@ -16,6 +16,7 @@ public class AtikuRequest {
     private String title;
     private String body;
     private String userName;
+    private String password;
 //    @Getter
 //    private String time = now.format(format);
     private String time;

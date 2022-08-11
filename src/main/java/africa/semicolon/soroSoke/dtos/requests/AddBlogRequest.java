@@ -6,5 +6,5 @@ import lombok.Data;
 public class AddBlogRequest {
     private String userName;
     private String blogTitle;
-    private String editTitle;
+    private String password;
 }
