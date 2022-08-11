@@ -3,8 +3,8 @@ package africa.semicolon.soroSoke.services;
 import africa.semicolon.soroSoke.data.models.Atiku;
 import africa.semicolon.soroSoke.data.models.Blog;
 import africa.semicolon.soroSoke.data.repositories.BlogRepository;
-import africa.semicolon.soroSoke.dtos.requests.BlogRequest;
 import africa.semicolon.soroSoke.dtos.requests.AtikuRequest;
+import africa.semicolon.soroSoke.dtos.requests.BlogRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

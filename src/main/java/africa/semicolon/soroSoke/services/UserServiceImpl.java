@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
             newBlog.setBlogTitle(createBlog.getBlogTitle());
             validateUser.setBlog(newBlog);
             userRepository.save(validateUser);
-            blogResponse.setMessage("Blog with " + createBlog.getBlogTitle() + " successfully created.");
+            blogResponse.setMessage("Blog with '" + createBlog.getBlogTitle() + "' successfully created.");
             return blogResponse;
         }
 
@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserService {
                 throw new ArticleRequestException(request.getUserName() + " is yet to create a Blog.");
             }
         } else {
-            atikuResponse.setMessage("User details " + request.getUserName() + " entered does not exist.");
+            atikuResponse.setMessage("User details '" + request.getUserName() + "' entered does not exist.");
         }
         return atikuResponse;
     }
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
             var deletedArticle = atikuService.deleteArticle(articleToDelete.getArticleId());
             if (deletedArticle != null) {
                 userRepository.save(userFound);
-                response.setMessage("Article " + deletedArticle.getTitle() + " removed successfully");
+                response.setMessage("Article '" + deletedArticle.getTitle() + "' removed successfully");
             } else {
                 throw new ArticleRequestException("The selected article don't exist.");
             }
@@ -166,9 +166,6 @@ public class UserServiceImpl implements UserService {
                 break;
             }
         }
-//        else{
-//            throw new CommentRequestException("The selected article is not in blog.");
-//        }
         blogService.saveBlog(userBlog);
         userRepository.save(user);
         response.setMessage("Comment successfully added to article.");
@@ -182,6 +179,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public int getNumberOfUserBlogs() {
         return blogService.getNumberOfUserBlogs();
+    }
+
+    @Override
+    public BlogResponse deleteBlog(BlogRequest blogRequest) {
+        var userFound = userRepository.findUserByUserNameIgnoreCase(blogRequest.getUserName());
+        var userPass = Objects.equals(userFound.getPassword(), blogRequest.getPassword());
+        BlogResponse response = new BlogResponse();
+        if (userPass) {
+            blogService.deleteBlog(blogRequest);
+            response.setMessage(blogRequest.getUserName() + "'s '" +
+                                blogRequest.getBlogTitle() + "' successfully removed");
+        }
+        response.setMessage("'"+ blogRequest.getBlogTitle() + "' doest not exist.");
+        return response;
     }
 
 }

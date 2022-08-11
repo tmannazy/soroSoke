@@ -268,4 +268,27 @@ class UserServiceImplTest {
         userService.deleteArticle(deleteArticleRequest);
         assertEquals(1, userService.getNumberOfArticles());
     }
+
+    @Test
+    void testToDeleteUserBlog() {
+        RegisterRequest registerUserForm = new RegisterRequest();
+        registerUserForm.setEmail("Plato");
+        registerUserForm.setPassword("@Platonic");
+        userService.registerUser(registerUserForm);
+
+        BlogRequest blogRequest = new BlogRequest();
+        blogRequest.setBlogTitle("Like, Love or Lust - The 3ple Ls of Life");
+        blogRequest.setUserName("plaTo");
+        blogRequest.setPassword("@Platonic");
+        userService.createNewBlog(blogRequest);
+        assertEquals(1, userService.getNumberOfUserBlogs());
+
+        BlogRequest blogRequest2 = new BlogRequest();
+        blogRequest2.setBlogTitle("Programming Is HARD");
+        blogRequest2.setUserName("Tman");
+        blogRequest2.setPassword("taLLest@2023");
+        userService.deleteBlog(blogRequest);
+        assertEquals(0, userService.getNumberOfUserBlogs());
+
+    }
 }
