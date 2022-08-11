@@ -131,8 +131,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public DeleteArticleResponse deleteArticle(DeleteArticleRequest articleToDelete) throws ArticleRequestException {
         var userFound = userRepository.findUserByUserNameIgnoreCase(articleToDelete.getUserName());
+        if (userFound == null) {
+            throw new UserExistsException("User not found. Enter correct details.");
+        }
+        var userPass = Objects.equals(userFound.getPassword(), articleToDelete.getPassword());
         DeleteArticleResponse response = new DeleteArticleResponse();
-        if (userFound != null) {
+        if (userPass) {
             var deletedArticle = atikuService.deleteArticle(articleToDelete.getArticleId());
             if (deletedArticle != null) {
                 userRepository.save(userFound);
@@ -140,6 +144,8 @@ public class UserServiceImpl implements UserService {
             } else {
                 throw new ArticleRequestException("The selected article don't exist.");
             }
+        } else {
+            throw new InvalidUserNameOrPasswordException("Username or Password incorrect.");
         }
         return response;
     }
@@ -191,7 +197,7 @@ public class UserServiceImpl implements UserService {
             response.setMessage(blogRequest.getUserName() + "'s '" +
                                 blogRequest.getBlogTitle() + "' successfully removed");
         }
-        response.setMessage("'"+ blogRequest.getBlogTitle() + "' doest not exist.");
+        response.setMessage("'" + blogRequest.getBlogTitle() + "' doest not exist.");
         return response;
     }
 
