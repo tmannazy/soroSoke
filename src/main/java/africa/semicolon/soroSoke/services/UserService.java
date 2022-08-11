@@ -19,7 +19,7 @@ public interface UserService {
 
     AtikuResponse addArticle(AtikuRequest request) throws ArticleRequestException;
 
-    UserBlogResponse getBlog(String userName);
+    UserBlogResponse displayUserBlog(String userName);
 
     DeleteArticleResponse deleteArticle(DeleteArticleRequest articleToDelete) throws ArticleRequestException;
 

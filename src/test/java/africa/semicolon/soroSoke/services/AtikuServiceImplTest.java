@@ -58,7 +58,7 @@ class AtikuServiceImplTest {
         Comment newComment = new Comment();
         commentRequest.setArticleId("GriT");
         commentRequest.setCommentMessage("It takes only GRIT to get over life challenges.");
-        newComment.setComment(commentRequest.getCommentMessage());
+        newComment.setCommentBody(commentRequest.getCommentMessage());
         newComment.setTime(commentRequest.getTime());
         atikuService.saveComment(commentRequest);
         var atikuFound = atikuService.getArticleByTitle(commentRequest.getArticleId());
@@ -68,7 +68,7 @@ class AtikuServiceImplTest {
         atikuRepository.save(atikuFound);
         assertEquals(1L, atikuService.getNumberOfArticles());
         assertEquals("It takes only GRIT to get over life challenges.",
-                atikuService.getAllArticles().get(0).getComments().get(0).getComment());
+                atikuService.getAllArticles().get(0).getComments().get(0).getCommentBody());
     }
 
     @Test
@@ -84,7 +84,7 @@ class AtikuServiceImplTest {
         Comment newComment = new Comment();
         commentRequest.setArticleId("GriT");
         commentRequest.setCommentMessage("It takes only GRIT to get over life challenges.");
-        newComment.setComment(commentRequest.getCommentMessage());
+        newComment.setCommentBody(commentRequest.getCommentMessage());
         newComment.setTime(commentRequest.getTime());
         var atikuFound = atikuService.getArticleByTitle(commentRequest.getArticleId());
         var savedComment = commentService.saveComment(newComment);
@@ -95,7 +95,7 @@ class AtikuServiceImplTest {
         Comment newComment2 = new Comment();
         commentRequest2.setArticleId("Grit");
         commentRequest2.setCommentMessage("God over everything.");
-        newComment2.setComment(commentRequest2.getCommentMessage());
+        newComment2.setCommentBody(commentRequest2.getCommentMessage());
         newComment2.setTime(commentRequest2.getTime());
         var atikuFound2 = atikuService.getArticleByTitle(commentRequest2.getArticleId());
         var savedComment2 = commentService.saveComment(newComment2);
@@ -108,6 +108,5 @@ class AtikuServiceImplTest {
         atikuService.deleteComment(commentToDel);
         assertEquals(1L,commentService.getNumberOfComments());
         assertEquals(1L,atikuRepository.count());
-
     }
 }

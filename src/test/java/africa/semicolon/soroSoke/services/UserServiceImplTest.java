@@ -170,11 +170,11 @@ class UserServiceImplTest {
 
         DeleteArticleRequest delArticle = new DeleteArticleRequest();
         delArticle.setUserName("BoyO");
-        delArticle.setArticleId(userService.getBlog("Boyo").getArticles().get(1).getId());
+        delArticle.setArticleId(userService.displayUserBlog("Boyo").getArticles().get(1).getId());
         userService.deleteArticle(delArticle);
 
         assertEquals(1, userService.getNumberOfArticles());
-        assertEquals(1,userService.getBlog("BOYO").getArticles().size());
+        assertEquals(1, userService.displayUserBlog("BOYO").getArticles().size());
     }
 
     @Test
@@ -215,7 +215,6 @@ class UserServiceImplTest {
         newRequest3.setUserName("Boyo");
         userService.addArticle(newRequest3);
         assertEquals(3, userService.getNumberOfArticles());
-        System.out.println(userService.getBlog("Boyo"));
 
         CommentRequest commentRequest = new CommentRequest();
         commentRequest.setCommentMessage("First step to be a programmer is to change your thinking pattern.");
@@ -223,8 +222,7 @@ class UserServiceImplTest {
         commentRequest.setUserName("Boyo");
         userService.addComment(commentRequest);
         assertEquals(2, userService.getNumberOfUserBlogs());
-        System.out.println("\n\n\n" + userService.getBlog("Boyo").getArticles().get(0));
-        System.out.println(userRepository.findUserByUserNameIgnoreCase("Boyo").getBlog());
-
+        assertEquals("First step to be a programmer is to change your thinking pattern.", userService.displayUserBlog("Boyo").
+                getArticles().get(0).getComments().get(0).getCommentBody());
     }
 }

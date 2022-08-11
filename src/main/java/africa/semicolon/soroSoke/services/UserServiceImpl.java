@@ -1,11 +1,13 @@
 package africa.semicolon.soroSoke.services;
 
-import africa.semicolon.soroSoke.data.models.Blog;
 import africa.semicolon.soroSoke.data.models.User;
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
 import africa.semicolon.soroSoke.dtos.requests.*;
 import africa.semicolon.soroSoke.dtos.responses.*;
-import africa.semicolon.soroSoke.exceptions.*;
+import africa.semicolon.soroSoke.exceptions.ArticleRequestException;
+import africa.semicolon.soroSoke.exceptions.BlogExistsException;
+import africa.semicolon.soroSoke.exceptions.InvalidUserNameOrPasswordException;
+import africa.semicolon.soroSoke.exceptions.UserExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -91,13 +93,12 @@ public class UserServiceImpl implements UserService {
         var validateUser = userRepository.findUserByUserNameIgnoreCase(request.getUserName());
         if (validateUser != null) {
             var checkBlog = validateUser.getBlog().getBlogTitle();
-            if(checkBlog != null) {
+            if (checkBlog != null) {
                 addArticleToUser(request, atikuResponse, validateUser);
-            }
-         else {
+            } else {
                 throw new ArticleRequestException(request.getUserName() + " is yet to create a Blog.");
             }
-        } else{
+        } else {
             atikuResponse.setMessage("User details " + request.getUserName() + " entered does not exist.");
         }
         return atikuResponse;
@@ -113,10 +114,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserBlogResponse getBlog(String userName) {
+    public UserBlogResponse displayUserBlog(String userName) {
         var userFound = userRepository.findUserByUserNameIgnoreCase(userName);
         UserBlogResponse response = new UserBlogResponse();
-        if (userFound != null){
+        if (userFound != null) {
             response.setBlogTitle(userFound.getBlog().getBlogTitle());
             response.setId(userFound.getBlog().getId());
             response.setArticles(userFound.getBlog().getArticles());
@@ -131,7 +132,6 @@ public class UserServiceImpl implements UserService {
         if (userFound != null) {
             var deletedArticle = atikuService.deleteArticle(articleToDelete.getArticleId());
             if (deletedArticle != null) {
-                userFound.getBlog().getArticles().remove(deletedArticle);
                 userRepository.save(userFound);
                 response.setMessage("Article " + deletedArticle.getTitle() + " removed successfully");
             } else {
@@ -147,13 +147,16 @@ public class UserServiceImpl implements UserService {
         CommentResponse response = new CommentResponse();
         if (user != null) {
             addCommentToArticle(commentRequest, user, response);
+        } else {
+            throw new UserExistsException(commentRequest.getUserName() + "can't be found. Try again");
         }
         return response;
     }
 
     private void addCommentToArticle(CommentRequest commentRequest, User user, CommentResponse response) {
         var userBlog = user.getBlog();
-        for(var article: userBlog.getArticles()){
+        var articleList = userBlog.getArticles();
+        for (var article : articleList) {
             if (Objects.equals(article.getId(), commentRequest.getArticleId())) {
                 var savedComment = atikuService.saveComment(commentRequest);
                 article.getComments().add(savedComment);

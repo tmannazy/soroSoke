@@ -56,7 +56,7 @@ public class UserController {
     @GetMapping("user/{email}")
     public ResponseEntity<?> viewBlog(@PathVariable String email) {
         try {
-            var viewBlog = userService.getBlog(email);
+            var viewBlog = userService.displayUserBlog(email);
             return new ResponseEntity<>(viewBlog, HttpStatus.ACCEPTED);
         } catch (BlogExistsException err) {
             return new ResponseEntity<>(err.getMessage(), HttpStatus.NOT_FOUND);
