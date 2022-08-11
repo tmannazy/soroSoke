@@ -4,11 +4,13 @@ import africa.semicolon.soroSoke.data.models.Atiku;
 import africa.semicolon.soroSoke.data.models.Comment;
 import africa.semicolon.soroSoke.data.repositories.AtikuRepository;
 import africa.semicolon.soroSoke.dtos.requests.CommentRequest;
+import africa.semicolon.soroSoke.dtos.requests.DeleteCommentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class AtikuServiceImpl implements AtikuService {
@@ -40,6 +42,11 @@ public class AtikuServiceImpl implements AtikuService {
     @Override
     public void deleteComment(String commentToDel) {
         commentService.deleteComment(commentToDel);
+    }
+
+    @Override
+    public Optional<Comment> deleteComment(DeleteCommentRequest commentToDel) {
+        return commentService.deleteComment(commentToDel);
     }
 
     @Override

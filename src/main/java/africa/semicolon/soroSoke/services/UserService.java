@@ -29,4 +29,6 @@ public interface UserService {
     int getNumberOfUserBlogs();
 
     BlogResponse deleteBlog(BlogRequest blogRequest);
+
+    CommentResponse deleteComment(DeleteCommentRequest deleteCommentRequest);
 }

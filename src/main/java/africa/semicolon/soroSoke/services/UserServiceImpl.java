@@ -4,10 +4,7 @@ import africa.semicolon.soroSoke.data.models.User;
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
 import africa.semicolon.soroSoke.dtos.requests.*;
 import africa.semicolon.soroSoke.dtos.responses.*;
-import africa.semicolon.soroSoke.exceptions.ArticleRequestException;
-import africa.semicolon.soroSoke.exceptions.BlogExistsException;
-import africa.semicolon.soroSoke.exceptions.InvalidUserNameOrPasswordException;
-import africa.semicolon.soroSoke.exceptions.UserExistsException;
+import africa.semicolon.soroSoke.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +17,9 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private BlogService blogService;
+
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private AtikuService atikuService;
@@ -198,6 +198,28 @@ public class UserServiceImpl implements UserService {
                                 blogRequest.getBlogTitle() + "' successfully removed");
         }
         response.setMessage("'" + blogRequest.getBlogTitle() + "' doest not exist.");
+        return response;
+    }
+
+    @Override
+    public CommentResponse deleteComment(DeleteCommentRequest deleteCommentRequest) {
+        var userFound = userRepository.findUserByUserNameIgnoreCase(deleteCommentRequest.getUserName());
+        if (userFound == null) {
+            throw new UserExistsException("User not found. Enter correct details.");
+        }
+        var userPass = Objects.equals(userFound.getPassword(), deleteCommentRequest.getPassword());
+        CommentResponse response = new CommentResponse();
+        var comment = commentService.deleteComment(deleteCommentRequest);
+        if (userPass) {
+            if (comment.isEmpty()) {
+                throw new CommentRequestException("Comment does not exist in '"
+                                                  + deleteCommentRequest.getUserName() + "' blog");
+            } else {
+                response.setMessage("'" + comment + "' successfully removed from article.");
+            }
+        } else {
+            throw new InvalidUserNameOrPasswordException("Username or Password incorrect.");
+        }
         return response;
     }
 

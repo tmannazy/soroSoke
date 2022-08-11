@@ -84,7 +84,7 @@ public class UserController {
     }
 
     @DeleteMapping("/blog/delete")
-    public ResponseEntity<?> deleteBlog(BlogRequest blogRequest) {
+    public ResponseEntity<?> deleteBlog(@RequestBody BlogRequest blogRequest) {
         try {
             var delBlog = userService.deleteBlog(blogRequest);
             return new ResponseEntity<>(delBlog, HttpStatus.OK);
@@ -94,8 +94,13 @@ public class UserController {
     }
 
     @DeleteMapping("/comment/delete")
-    public ResponseEntity<?> deleteComment() {
-        return null;
+    public ResponseEntity<?> deleteComment(@RequestBody DeleteCommentRequest deleteCommentRequest) {
+        try {
+            var delComment = userService.deleteComment(deleteCommentRequest);
+            return new ResponseEntity<>(delComment, HttpStatus.OK);
+        } catch (CommentRequestException | UserExistsException | InvalidUserNameOrPasswordException err) {
+            return new ResponseEntity<>(err.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
 }

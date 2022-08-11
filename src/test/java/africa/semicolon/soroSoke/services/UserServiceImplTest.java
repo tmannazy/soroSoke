@@ -36,6 +36,9 @@ class UserServiceImplTest {
     @Autowired
     private BlogService blogService;
 
+    @Autowired
+    private CommentService commentService;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAll();
@@ -289,6 +292,44 @@ class UserServiceImplTest {
         blogRequest2.setPassword("taLLest@2023");
         userService.deleteBlog(blogRequest);
         assertEquals(0, userService.getNumberOfUserBlogs());
+    }
 
+    @Test
+    void testToDeleteArticleComment() {
+        BlogRequest blogRequest2 = new BlogRequest();
+        blogRequest2.setBlogTitle("All About Programming");
+        blogRequest2.setUserName("boyo");
+        blogRequest2.setPassword("amanpia2023");
+        userService.createNewBlog(blogRequest2);
+        assertEquals(1, userService.getNumberOfUserBlogs());
+
+        AtikuRequest newRequest3 = new AtikuRequest();
+        newRequest3.setTitle("How to Think Like A Programmer");
+        newRequest3.setBody("The power of the mind is the ability to stretch the thinking muscle.");
+        newRequest3.setUserName("Boyo");
+        userService.addArticle(newRequest3);
+        assertEquals(1, userService.getNumberOfArticles());
+
+        CommentRequest commentRequest = new CommentRequest();
+        commentRequest.setCommentMessage("First step to be a programmer is to change your thinking pattern.");
+        commentRequest.setArticleId(atikuService.getAllArticles().get(0).getId());
+        commentRequest.setUserName("Boyo");
+        userService.addComment(commentRequest);
+
+        CommentRequest commentRequest2 = new CommentRequest();
+        commentRequest2.setCommentMessage("Good to go most times is the first step of life.");
+        commentRequest2.setArticleId(atikuService.getAllArticles().get(0).getId());
+        commentRequest2.setUserName("Boyo");
+        userService.addComment(commentRequest2);
+        assertEquals(2, userService.displayUserBlog("Boyo").
+                getArticles().get(0).getComments().size());
+
+        DeleteCommentRequest deleteCommentRequest = new DeleteCommentRequest();
+        deleteCommentRequest.setCommentId(commentService.getAllComments().get(0).getId());
+        deleteCommentRequest.setUserName("BOYO");
+        deleteCommentRequest.setPassword("amanpia2023");
+        userService.deleteComment(deleteCommentRequest);
+        assertEquals(1, userService.displayUserBlog("Boyo").
+                getArticles().get(0).getComments().size());
     }
 }
