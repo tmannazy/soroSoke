@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BlogResponse createNewBlog(AddBlogRequest createBlog) throws BlogExistsException {
+    public BlogResponse createNewBlog(BlogRequest createBlog) throws BlogExistsException {
         var validateUser = userRepository.findUserByUserNameIgnoreCase(createBlog.getUserName());
         BlogResponse blogResponse = new BlogResponse();
         if (validateUser == null) {

@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @PatchMapping("/user/new-blog")
-    public ResponseEntity<?> createBlog(@RequestBody AddBlogRequest createBlog) {
+    public ResponseEntity<?> createBlog(@RequestBody BlogRequest createBlog) {
         try {
             var blogResponse = userService.createNewBlog(createBlog);
             return new ResponseEntity<>(blogResponse, HttpStatus.CREATED);

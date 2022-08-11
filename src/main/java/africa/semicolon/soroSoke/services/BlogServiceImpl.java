@@ -3,9 +3,8 @@ package africa.semicolon.soroSoke.services;
 import africa.semicolon.soroSoke.data.models.Atiku;
 import africa.semicolon.soroSoke.data.models.Blog;
 import africa.semicolon.soroSoke.data.repositories.BlogRepository;
-import africa.semicolon.soroSoke.dtos.requests.AddBlogRequest;
+import africa.semicolon.soroSoke.dtos.requests.BlogRequest;
 import africa.semicolon.soroSoke.dtos.requests.AtikuRequest;
-import africa.semicolon.soroSoke.exceptions.BlogExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,7 @@ public class BlogServiceImpl implements BlogService {
     private AtikuService atikuService;
 
     @Override
-    public Blog saveBlog(AddBlogRequest blogName) {
+    public Blog saveBlog(BlogRequest blogName) {
         Blog newBlog = new Blog();
         var searchBlog = blogRepository.getBlogByBlogTitleIgnoreCase(blogName.getBlogTitle());
         if(searchBlog == null) {
@@ -44,8 +43,9 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public void deleteBlog(Blog blog) {
-        blogRepository.delete(blog);
+    public void deleteBlog(BlogRequest blogRequest) {
+        var blogFound = blogRepository.getBlogByBlogTitleIgnoreCase(blogRequest.getBlogTitle());
+        blogRepository.delete(blogFound);
     }
 
     @Override

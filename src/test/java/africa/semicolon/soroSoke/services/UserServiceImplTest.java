@@ -88,7 +88,7 @@ class UserServiceImplTest {
 
     @Test
     void userCanCreateNewBlogTest() throws BlogExistsException {
-        AddBlogRequest blogRequest = new AddBlogRequest();
+        BlogRequest blogRequest = new BlogRequest();
         blogRequest.setBlogTitle("Programming is Hard");
         blogRequest.setUserName("BoYo");
         blogRequest.setPassword("amanpia2023");
@@ -98,14 +98,14 @@ class UserServiceImplTest {
 
     @Test
     void userCanOnlyCreateBlogOnceTest() throws BlogExistsException {
-        AddBlogRequest blogRequest = new AddBlogRequest();
+        BlogRequest blogRequest = new BlogRequest();
         blogRequest.setBlogTitle("Programming is Hard");
         blogRequest.setUserName("boyo");
         blogRequest.setPassword("amanpia2023");
         userService.createNewBlog(blogRequest);
         assertEquals(1, userService.getNumberOfUserBlogs());
 
-        AddBlogRequest blogRequest2 = new AddBlogRequest();
+        BlogRequest blogRequest2 = new BlogRequest();
         blogRequest2.setBlogTitle("Programming is HARd");
         blogRequest2.setUserName("boyo");
         blogRequest.setPassword("amanpia2023");
@@ -117,14 +117,14 @@ class UserServiceImplTest {
 
     @Test
     void testThatUserCanUpdateBlogTitle() {
-        AddBlogRequest blogRequest = new AddBlogRequest();
+        BlogRequest blogRequest = new BlogRequest();
         blogRequest.setBlogTitle("Programming Is HARD");
         blogRequest.setUserName("boyo");
         blogRequest.setPassword("amanpia2023");
         userService.createNewBlog(blogRequest);
         assertEquals(1L, userService.getNumberOfUserBlogs());
 
-        AddBlogRequest blogRequest2 = new AddBlogRequest();
+        BlogRequest blogRequest2 = new BlogRequest();
         blogRequest2.setBlogTitle("Programming takes consistency, time & patience");
         blogRequest2.setUserName("boyo");
         blogRequest2.setPassword("amanpia2023");
@@ -136,7 +136,7 @@ class UserServiceImplTest {
 
     @Test
     void testThatUserCanCreateBlogAndAddArticle() throws ArticleRequestException {
-        AddBlogRequest blogRequest = new AddBlogRequest();
+        BlogRequest blogRequest = new BlogRequest();
         blogRequest.setBlogTitle("All About Programming");
         blogRequest.setUserName("boyo");
         blogRequest.setPassword("amanpia2023");
@@ -155,7 +155,7 @@ class UserServiceImplTest {
 
     @Test
     void testToDeleteAnArticle() throws ArticleRequestException {
-        AddBlogRequest blogRequest = new AddBlogRequest();
+        BlogRequest blogRequest = new BlogRequest();
         blogRequest.setBlogTitle("All About Programming");
         blogRequest.setUserName("boyo");
         blogRequest.setPassword("amanpia2023");
@@ -179,7 +179,6 @@ class UserServiceImplTest {
         delArticle.setUserName("BoyO");
         delArticle.setArticleId(userService.displayUserBlog("Boyo").getArticles().get(1).getId());
         userService.deleteArticle(delArticle);
-
         assertEquals(1, userService.getNumberOfArticles());
         assertEquals(1, userService.displayUserBlog("BOYO").getArticles().size());
     }
@@ -191,7 +190,7 @@ class UserServiceImplTest {
         registerUserForm.setPassword("@Platonic");
         userService.registerUser(registerUserForm);
 
-        AddBlogRequest blogRequest = new AddBlogRequest();
+        BlogRequest blogRequest = new BlogRequest();
         blogRequest.setBlogTitle("Like, Love or Lust - The 3ple Ls of Life");
         blogRequest.setUserName("plaTo");
         blogRequest.setPassword("@Platonic");
@@ -211,7 +210,7 @@ class UserServiceImplTest {
         userService.addArticle(newRequest2);
         assertEquals(2, userService.getNumberOfArticles());
 
-        AddBlogRequest blogRequest2 = new AddBlogRequest();
+        BlogRequest blogRequest2 = new BlogRequest();
         blogRequest2.setBlogTitle("All About Programming");
         blogRequest2.setUserName("boyo");
         blogRequest2.setPassword("amanpia2023");
@@ -233,5 +232,40 @@ class UserServiceImplTest {
         assertEquals(2, userService.getNumberOfUserBlogs());
         assertEquals("First step to be a programmer is to change your thinking pattern.", userService.displayUserBlog("Boyo").
                 getArticles().get(0).getComments().get(0).getCommentBody());
+    }
+
+    @Test
+    void testToDeleteACommentFromArticle() {
+        RegisterRequest registerUserForm = new RegisterRequest();
+        registerUserForm.setEmail("Plato");
+        registerUserForm.setPassword("@Platonic");
+        userService.registerUser(registerUserForm);
+
+        BlogRequest blogRequest = new BlogRequest();
+        blogRequest.setBlogTitle("Like, Love or Lust - The 3ple Ls of Life");
+        blogRequest.setUserName("plaTo");
+        blogRequest.setPassword("@Platonic");
+        userService.createNewBlog(blogRequest);
+        assertEquals(1, userService.getNumberOfUserBlogs());
+
+        AtikuRequest newRequest = new AtikuRequest();
+        newRequest.setTitle("What is Like?");
+        newRequest.setBody("Humans are creatures of emotions but how long can it last?");
+        newRequest.setUserName("pLatO");
+        userService.addArticle(newRequest);
+
+        AtikuRequest newRequest2 = new AtikuRequest();
+        newRequest2.setTitle("How bad can Lust deceive you thinking you Love?");
+        newRequest2.setBody("It always runs in one's blood stream. There is an urge to satisfy.");
+        newRequest2.setUserName("pLatO");
+        userService.addArticle(newRequest2);
+        assertEquals(2, userService.getNumberOfArticles());
+
+        DeleteArticleRequest deleteArticleRequest = new DeleteArticleRequest();
+        deleteArticleRequest.setArticleId(userService.displayUserBlog("Plato").getArticles().get(1).getId());
+        deleteArticleRequest.setUserName("PLATO");
+        deleteArticleRequest.setPassword("@Platonic");
+        userService.deleteArticle(deleteArticleRequest);
+        assertEquals(1, userService.getNumberOfArticles());
     }
 }
