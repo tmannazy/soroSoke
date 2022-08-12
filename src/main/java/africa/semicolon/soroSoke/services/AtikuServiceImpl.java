@@ -2,12 +2,15 @@ package africa.semicolon.soroSoke.services;
 
 import africa.semicolon.soroSoke.data.models.Atiku;
 import africa.semicolon.soroSoke.data.models.Comment;
+import africa.semicolon.soroSoke.data.models.User;
 import africa.semicolon.soroSoke.data.repositories.AtikuRepository;
+import africa.semicolon.soroSoke.dtos.requests.AtikuRequest;
 import africa.semicolon.soroSoke.dtos.requests.CommentRequest;
 import africa.semicolon.soroSoke.dtos.requests.DeleteCommentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -21,7 +24,11 @@ public class AtikuServiceImpl implements AtikuService {
 
     @Override
     public Atiku saveArticle(Atiku newAtiku) {
-        return atikuRepository.save(newAtiku);
+        duplicateArticleDoesNotExist(String.valueOf(newAtiku));
+        var savedArticle = atikuRepository.save(newAtiku);
+
+        System.out.println(newAtiku);
+        return savedArticle;
     }
 
     @Override
@@ -75,9 +82,13 @@ public class AtikuServiceImpl implements AtikuService {
 
     private void mapComment(CommentRequest commentRequest, Comment comment, Atiku article) {
         comment.setCommentBody(commentRequest.getCommentMessage());
-        comment.setTime(commentRequest.getTime());
+        comment.setTime(LocalDateTime.now());
         var savedComment = commentService.saveComment(comment);
         article.getComments().add(savedComment);
         atikuRepository.save(article);
+    }
+    private boolean duplicateArticleDoesNotExist(String userName){
+        User user = new User();
+        return userName.equals(user.getUserName());
     }
 }

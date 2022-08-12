@@ -2,6 +2,7 @@ package africa.semicolon.soroSoke.services;
 
 import africa.semicolon.soroSoke.data.repositories.AtikuRepository;
 import africa.semicolon.soroSoke.data.repositories.BlogRepository;
+import africa.semicolon.soroSoke.data.repositories.CommentRepository;
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
 import africa.semicolon.soroSoke.dtos.requests.*;
 import africa.semicolon.soroSoke.exceptions.ArticleRequestException;
@@ -39,11 +40,15 @@ class UserServiceImplTest {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private CommentRepository commentRepository;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAll();
         blogRepository.deleteAll();
         atikuRepository.deleteAll();
+        commentRepository.deleteAll();
     }
 
     @BeforeEach
@@ -150,9 +155,21 @@ class UserServiceImplTest {
         newRequest.setTitle("Welcome to Programming 101");
         newRequest.setBody("Here we are going to go on a journey to introduce you to the world of programming.");
         newRequest.setUserName("Boyo");
+        newRequest.setPassword("amanpia2023");
         userService.addArticle(newRequest);
+
+        AtikuRequest newRequest2 = new AtikuRequest();
+        newRequest2.setTitle("Welcome to Programming 101");
+        newRequest2.setBody("Journey to introduce you to the world of programming.");
+        newRequest2.setUserName("Boyo");
+        newRequest2.setPassword("amanpia2023");
+        ArticleRequestException article = assertThrows(ArticleRequestException.class,
+                () -> userService.addArticle(newRequest2));
+        assertEquals("'Welcome to Programming 101' already exists in Boyo's blog.", article.getMessage());
         assertEquals("Welcome to Programming 101", userRepository.findUserByUserNameIgnoreCase("Boyo").
                 getBlog().getArticles().get(0).getTitle());
+        assertEquals(1, userRepository.findUserByUserNameIgnoreCase("Boyo").
+                getBlog().getArticles().size());
         assertEquals(1L, userService.getNumberOfUserBlogs());
     }
 
@@ -169,17 +186,20 @@ class UserServiceImplTest {
         newRequest.setTitle("How to Think Like A Programmer");
         newRequest.setBody("The power of the mind is the ability to stretch the thinking muscle.");
         newRequest.setUserName("Boyo");
+        newRequest.setPassword("amanpia2023");
         userService.addArticle(newRequest);
 
         AtikuRequest newRequest2 = new AtikuRequest();
         newRequest2.setTitle("Welcome to Programming 101");
         newRequest2.setBody("Here we are going to go on a journey to introduce you to the world of programming.");
         newRequest2.setUserName("Boyo");
+        newRequest2.setPassword("amanpia2023");
         userService.addArticle(newRequest2);
         assertEquals(2, userService.getNumberOfArticles());
 
         DeleteArticleRequest delArticle = new DeleteArticleRequest();
         delArticle.setUserName("BoyO");
+        delArticle.setPassword("amanpia2023");
         delArticle.setArticleId(userService.displayUserBlog("Boyo").getArticles().get(1).getId());
         userService.deleteArticle(delArticle);
         assertEquals(1, userService.getNumberOfArticles());
@@ -204,12 +224,14 @@ class UserServiceImplTest {
         newRequest.setTitle("What is Like?");
         newRequest.setBody("Humans are creatures of emotions but how long can it last?");
         newRequest.setUserName("pLatO");
+        newRequest.setPassword("@Platonic");
         userService.addArticle(newRequest);
 
         AtikuRequest newRequest2 = new AtikuRequest();
         newRequest2.setTitle("How bad can Lust deceive you thinking you Love?");
         newRequest2.setBody("It always runs in one's blood stream. There is an urge to satisfy.");
         newRequest2.setUserName("pLatO");
+        newRequest2.setPassword("@Platonic");
         userService.addArticle(newRequest2);
         assertEquals(2, userService.getNumberOfArticles());
 
@@ -224,6 +246,7 @@ class UserServiceImplTest {
         newRequest3.setTitle("How to Think Like A Programmer");
         newRequest3.setBody("The power of the mind is the ability to stretch the thinking muscle.");
         newRequest3.setUserName("Boyo");
+        newRequest3.setPassword("amanpia2023");
         userService.addArticle(newRequest3);
         assertEquals(3, userService.getNumberOfArticles());
 
@@ -255,12 +278,14 @@ class UserServiceImplTest {
         newRequest.setTitle("What is Like?");
         newRequest.setBody("Humans are creatures of emotions but how long can it last?");
         newRequest.setUserName("pLatO");
+        newRequest.setPassword("@Platonic");
         userService.addArticle(newRequest);
 
         AtikuRequest newRequest2 = new AtikuRequest();
         newRequest2.setTitle("How bad can Lust deceive you thinking you Love?");
         newRequest2.setBody("It always runs in one's blood stream. There is an urge to satisfy.");
         newRequest2.setUserName("pLatO");
+        newRequest2.setPassword("@Platonic");
         userService.addArticle(newRequest2);
         assertEquals(2, userService.getNumberOfArticles());
 
@@ -307,6 +332,7 @@ class UserServiceImplTest {
         newRequest3.setTitle("How to Think Like A Programmer");
         newRequest3.setBody("The power of the mind is the ability to stretch the thinking muscle.");
         newRequest3.setUserName("Boyo");
+        newRequest3.setPassword("amanpia2023");
         userService.addArticle(newRequest3);
         assertEquals(1, userService.getNumberOfArticles());
 

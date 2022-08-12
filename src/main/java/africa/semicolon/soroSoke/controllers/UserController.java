@@ -38,7 +38,7 @@ public class UserController {
         try {
             var blogResponse = userService.createNewBlog(createBlog);
             return new ResponseEntity<>(blogResponse, HttpStatus.CREATED);
-        } catch (BlogExistsException err) {
+        } catch (BlogExistsException | InvalidUserNameOrPasswordException err) {
             return new ResponseEntity<>(err.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -48,7 +48,7 @@ public class UserController {
         try {
             var articleResponse = userService.addArticle(request);
             return new ResponseEntity<>(articleResponse, HttpStatus.CREATED);
-        } catch (ArticleRequestException err) {
+        } catch (ArticleRequestException | InvalidUserNameOrPasswordException | UserExistsException err) {
             return new ResponseEntity<>(err.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

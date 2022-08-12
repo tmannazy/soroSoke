@@ -8,6 +8,7 @@ import africa.semicolon.soroSoke.dtos.requests.BlogRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -62,7 +63,7 @@ public class BlogServiceImpl implements BlogService {
     public Atiku addArticle(AtikuRequest request) {
         Atiku newAtiku = new Atiku();
         newAtiku.setTitle(request.getTitle());
-        newAtiku.setTime(request.getTime());
+        newAtiku.setTime(LocalDateTime.now());
         newAtiku.setBody(request.getBody());
         return atikuService.saveArticle(newAtiku);
     }

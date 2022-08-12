@@ -1,5 +1,6 @@
 package africa.semicolon.soroSoke.services;
 
+import africa.semicolon.soroSoke.data.models.Blog;
 import africa.semicolon.soroSoke.data.models.User;
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
 import africa.semicolon.soroSoke.dtos.requests.*;
@@ -40,14 +41,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public BlogResponse createNewBlog(BlogRequest createBlog) throws BlogExistsException {
-        var validateUser = userRepository.findUserByUserNameIgnoreCase(createBlog.getUserName());
         BlogResponse blogResponse = new BlogResponse();
+
+        var validateUser = userRepository.findUserByUserNameIgnoreCase(createBlog.getUserName());
         if (validateUser == null) {
             throw new BlogExistsException(createBlog.getUserName() + " does not exist! Create an account.");
         }
 
         var userPass = Objects.equals(validateUser.getPassword(), createBlog.getPassword());
-        if (validateUser.getBlog() == null && userPass) {
+        if (!userPass) {
+            throw new InvalidUserNameOrPasswordException("Username or Password incorrect. Try again!");
+        }
+
+        if (validateUser.getBlog() == null) {
             var newBlog = blogService.saveBlog(createBlog);
             newBlog.setBlogTitle(createBlog.getBlogTitle());
             validateUser.setBlog(newBlog);
@@ -62,7 +68,7 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        if (!validateUser.getBlog().getBlogTitle().isEmpty() && userPass) {
+        if (!validateUser.getBlog().getBlogTitle().isEmpty()) {
             var newBlog = blogService.getBlogByTitle(validateUser.getBlog().getBlogTitle());
             blogResponse.setMessage(validateUser.getBlog().getBlogTitle() +
                                     " blog title successfully updated with " + createBlog.getBlogTitle());
@@ -71,6 +77,8 @@ public class UserServiceImpl implements UserService {
             userRepository.save(validateUser);
             return blogResponse;
         }
+
+
         blogResponse.setMessage("User not found");
         return blogResponse;
     }
@@ -80,7 +88,7 @@ public class UserServiceImpl implements UserService {
         var user = userRepository.findUserByUserNameIgnoreCase(loginRequest.getUserName());
         LoginResponse loginResponse = new LoginResponse();
         if (user == null) {
-            throw new InvalidUserNameOrPasswordException("Username or password incorrect. Try again");
+            throw new InvalidUserNameOrPasswordException("Username or password incorrect. Try again!");
         }
         if (!Objects.equals(user.getPassword(), loginRequest.getPassword())) {
             throw new InvalidUserNameOrPasswordException("Username or password incorrect. Try again");
@@ -94,20 +102,38 @@ public class UserServiceImpl implements UserService {
     public AtikuResponse addArticle(AtikuRequest request) throws ArticleRequestException {
         AtikuResponse atikuResponse = new AtikuResponse();
         var validateUser = userRepository.findUserByUserNameIgnoreCase(request.getUserName());
-        if (validateUser != null) {
-            var checkBlog = validateUser.getBlog().getBlogTitle();
-            if (checkBlog != null) {
-                addArticleToUser(request, atikuResponse, validateUser);
-            } else {
-                throw new ArticleRequestException(request.getUserName() + " is yet to create a Blog.");
-            }
+        if (validateUser == null) {
+            throw new UserExistsException("User details '" + request.getUserName() + "' entered does not exist.");
+        }
+        var userPass = Objects.equals(validateUser.getPassword(), request.getPassword());
+        if (!userPass) {
+            throw new InvalidUserNameOrPasswordException("Username or Password incorrect. Try again!");
+        }
+        var checkBlog = validateUser.getBlog();
+        if (checkBlog.getBlogTitle() != null) {
+            addArticleToUser(request, atikuResponse, validateUser, checkBlog);
         } else {
-            atikuResponse.setMessage("User details '" + request.getUserName() + "' entered does not exist.");
+            throw new ArticleRequestException(request.getUserName() + " is yet to create a Blog.");
         }
         return atikuResponse;
     }
 
-    private void addArticleToUser(AtikuRequest request, AtikuResponse atikuResponse, User validateUser) {
+    private void addArticleToUser(AtikuRequest request, AtikuResponse atikuResponse, User validateUser, Blog checkBlog) {
+        var userArticles = checkBlog.getArticles();
+        for (var article : userArticles) {
+            if (article.getTitle().equalsIgnoreCase(request.getTitle())) {
+                throw new ArticleRequestException("'" + request.getTitle() + "' already exists in " +
+                                                  request.getUserName() + "'s blog.");
+            }
+        }
+        var savedArticle = blogService.addArticle(request);
+        userArticles.add(savedArticle);
+        blogService.saveBlog(checkBlog);
+        userRepository.save(validateUser);
+        atikuResponse.setMessage("Article added to " + request.getUserName() + "'s Blog.");
+    }
+
+    private void addArticleToUsesr(AtikuRequest request, AtikuResponse atikuResponse, User validateUser) {
         var userBlog = validateUser.getBlog();
         var savedArticle = blogService.addArticle(request);
         userBlog.getArticles().add(savedArticle);
