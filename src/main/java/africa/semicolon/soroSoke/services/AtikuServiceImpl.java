@@ -18,7 +18,7 @@ import java.util.Optional;
 public class AtikuServiceImpl implements AtikuService {
     @Autowired
     CommentService commentService;
-    Math.PI
+
     @Autowired
     private AtikuRepository atikuRepository;
 
