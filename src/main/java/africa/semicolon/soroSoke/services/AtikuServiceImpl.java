@@ -24,11 +24,7 @@ public class AtikuServiceImpl implements AtikuService {
 
     @Override
     public Atiku saveArticle(Atiku newAtiku) {
-        duplicateArticleDoesNotExist(String.valueOf(newAtiku));
-        var savedArticle = atikuRepository.save(newAtiku);
-
-        System.out.println(newAtiku);
-        return savedArticle;
+        return atikuRepository.save(newAtiku);
     }
 
     @Override
@@ -86,9 +82,5 @@ public class AtikuServiceImpl implements AtikuService {
         var savedComment = commentService.saveComment(comment);
         article.getComments().add(savedComment);
         atikuRepository.save(article);
-    }
-    private boolean duplicateArticleDoesNotExist(String userName){
-        User user = new User();
-        return userName.equals(user.getUserName());
     }
 }
