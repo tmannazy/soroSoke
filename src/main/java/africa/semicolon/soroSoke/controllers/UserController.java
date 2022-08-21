@@ -33,7 +33,7 @@ public class UserController {
         }
     }
 
-    @PatchMapping("/user/new-blog")
+    @PutMapping("/user/new-blog")
     public ResponseEntity<?> createBlog(@RequestBody BlogRequest createBlog) {
         try {
             var blogResponse = userService.createNewBlog(createBlog);
@@ -63,7 +63,7 @@ public class UserController {
         }
     }
 
-    @PatchMapping("user/comment")
+    @PostMapping("user/comment")
     public ResponseEntity<?> comment(@RequestBody CommentRequest commentRequest) {
         try {
             var comment = userService.addComment(commentRequest);
@@ -99,6 +99,16 @@ public class UserController {
             var delComment = userService.deleteComment(deleteCommentRequest);
             return new ResponseEntity<>(delComment, HttpStatus.OK);
         } catch (CommentRequestException | UserExistsException | InvalidUserNameOrPasswordException err) {
+            return new ResponseEntity<>(err.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/user/all-articles")
+    public ResponseEntity<?> getArticles(@RequestBody BlogRequest request) {
+        try {
+            var viewArticles = userService.getUserBlogArticles(request);
+            return new ResponseEntity<>(viewArticles, HttpStatus.OK);
+        } catch (InvalidUserNameOrPasswordException | UserExistsException err) {
             return new ResponseEntity<>(err.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

@@ -1,5 +1,6 @@
 package africa.semicolon.soroSoke.services;
 
+import africa.semicolon.soroSoke.data.models.Atiku;
 import africa.semicolon.soroSoke.data.models.Blog;
 import africa.semicolon.soroSoke.data.models.User;
 import africa.semicolon.soroSoke.data.repositories.UserRepository;
@@ -9,6 +10,8 @@ import africa.semicolon.soroSoke.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -54,7 +57,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (validateUser.getBlog() == null) {
-            var newBlog = blogService.saveBlog(createBlog);
+            Blog newBlog = blogService.saveBlog(createBlog);
             newBlog.setBlogTitle(createBlog.getBlogTitle());
             validateUser.setBlog(newBlog);
             userRepository.save(validateUser);
@@ -133,7 +136,7 @@ public class UserServiceImpl implements UserService {
         atikuResponse.setMessage("Article added to " + request.getUserName() + "'s Blog.");
     }
 
-    private void addArticleToUsesr(AtikuRequest request, AtikuResponse atikuResponse, User validateUser) {
+    private void addArticleToUser(AtikuRequest request, AtikuResponse atikuResponse, User validateUser) {
         var userBlog = validateUser.getBlog();
         var savedArticle = blogService.addArticle(request);
         userBlog.getArticles().add(savedArticle);
@@ -247,6 +250,19 @@ public class UserServiceImpl implements UserService {
             throw new InvalidUserNameOrPasswordException("Username or Password incorrect.");
         }
         return response;
+    }
+
+    @Override
+    public List<Atiku> getUserBlogArticles(BlogRequest blogRequest2) {
+        var userFound = userRepository.findUserByUserNameIgnoreCase(blogRequest2.getUserName());
+        if (userFound == null) {
+            throw new UserExistsException("User not found. Enter correct details.");
+        }
+        var userPass = Objects.equals(userFound.getPassword(), blogRequest2.getPassword());
+        if (!userPass) {
+            throw new InvalidUserNameOrPasswordException("Username or Password incorrect.");
+        }
+        return userFound.getBlog().getArticles();
     }
 
 }

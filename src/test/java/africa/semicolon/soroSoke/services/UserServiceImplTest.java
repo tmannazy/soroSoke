@@ -358,4 +358,32 @@ class UserServiceImplTest {
         assertEquals(1, userService.displayUserBlog("Boyo").
                 getArticles().get(0).getComments().size());
     }
+
+    @Test
+    void testToGetAllUserBlogArticles() {
+        BlogRequest blogRequest2 = new BlogRequest();
+        blogRequest2.setBlogTitle("All About Programming");
+        blogRequest2.setUserName("boyo");
+        blogRequest2.setPassword("amanpia2023");
+        userService.createNewBlog(blogRequest2);
+        assertEquals(1, userService.getNumberOfUserBlogs());
+
+        AtikuRequest newRequest = new AtikuRequest();
+        newRequest.setTitle("How to Think Like A Programmer");
+        newRequest.setBody("The power of the mind is the ability to stretch the thinking muscle.");
+        newRequest.setUserName("Boyo");
+        newRequest.setPassword("amanpia2023");
+        userService.addArticle(newRequest);
+        assertEquals(1, userService.getNumberOfArticles());
+
+        AtikuRequest newRequest2 = new AtikuRequest();
+        newRequest2.setTitle("How bad can Lust deceive you thinking you Love?");
+        newRequest2.setBody("It always runs in one's blood stream. There is an urge to satisfy.");
+        newRequest2.setUserName("Boyo");
+        newRequest2.setPassword("amanpia2023");
+        userService.addArticle(newRequest2);
+        assertEquals(2, userService.getNumberOfArticles());
+
+        assertEquals(2,userService.getUserBlogArticles(blogRequest2).size());
+    }
 }
